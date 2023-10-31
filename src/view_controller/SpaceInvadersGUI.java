@@ -5,7 +5,7 @@ import javafx.scene.Scene;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
-public class GUI extends Application {
+public class SpaceInvadersGUI extends Application {
 	
 	private BorderPane pane = new BorderPane();
 
