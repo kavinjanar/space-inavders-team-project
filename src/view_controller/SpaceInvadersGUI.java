@@ -8,6 +8,10 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import model.Alien;
+import model.Alien1;
+import model.Alien2;
+import model.Alien3;
 
 public class SpaceInvadersGUI extends Application {
 	private BorderPane pane = new BorderPane();
@@ -51,5 +55,35 @@ public class SpaceInvadersGUI extends Application {
 			tutorialWindow.setY(stage.getY() + 50);
 			tutorialWindow.show();
 		});
+	}
+	
+	
+	//Setup grid of aliens
+	private void alienGrid(Stage stage) {
+		int rows = 5;
+		int cols = 10;
+
+		Alien[][] aliens = new Alien[rows][cols];
+
+		for(int i = 0; i < rows; i++) {
+		    for(int j = 0; j < cols; j++) {
+		        Alien alien;
+		        
+		        if (i % 3 == 0) {
+		            alien = new Alien1();
+		        } else if (i % 3 == 1) {
+		            alien = new Alien2();
+		        } else {
+		            alien = new Alien3();
+		        }
+		        
+		        alien.setLayoutX(j * 50);  // x-coordinate
+		        alien.setLayoutY(i * 50);  // y-coordinate
+		        
+		        aliens[i][j] = alien;
+		        
+		        pane.getChildren().add(alien);
+		    }
+		}
 	}
 }
