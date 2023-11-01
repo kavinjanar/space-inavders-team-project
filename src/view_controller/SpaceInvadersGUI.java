@@ -35,6 +35,8 @@ public class SpaceInvadersGUI extends Application {
 		stage.setTitle("Space Invaders");
 		stage.setScene(scene);
 		stage.show();
+		
+		alienGrid(stage);
 	}
 
 	private void initTutorialWindow(Stage stage) {
@@ -56,8 +58,8 @@ public class SpaceInvadersGUI extends Application {
 			tutorialWindow.show();
 		});
 	}
-	
-	
+
+
 	//Setup grid of aliens
 	private void alienGrid(Stage stage) {
 		int rows = 5;
@@ -66,24 +68,24 @@ public class SpaceInvadersGUI extends Application {
 		Alien[][] aliens = new Alien[rows][cols];
 
 		for(int i = 0; i < rows; i++) {
-		    for(int j = 0; j < cols; j++) {
-		        Alien alien;
-		        
-		        if (i % 3 == 0) {
-		            alien = new Alien1();
-		        } else if (i % 3 == 1) {
-		            alien = new Alien2();
-		        } else {
-		            alien = new Alien3();
-		        }
-		        
-		        alien.setLayoutX(j * 50);  // x-coordinate
-		        alien.setLayoutY(i * 50);  // y-coordinate
-		        
-		        aliens[i][j] = alien;
-		        
-		        pane.getChildren().add(alien);
-		    }
+			for(int j = 0; j < cols; j++) {
+				Alien alien;
+
+				if (i % 3 == 0) {
+					alien = new Alien1();
+				} else if (i % 3 == 1) {
+					alien = new Alien2();
+				} else {
+					alien = new Alien3();
+				}
+
+				alien.setLayoutX(j * 50);  // x-coordinate
+				alien.setLayoutY(i * 50);  // y-coordinate
+
+				aliens[i][j] = alien;
+
+				pane.getChildren().add(alien);
+			}
 		}
 	}
 }
