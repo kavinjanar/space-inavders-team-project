@@ -36,7 +36,7 @@ public class SpaceInvadersGUI extends Application {
 		stage.setScene(scene);
 		stage.show();
 		
-		alienGrid(stage);
+//		alienGrid(stage);
 	}
 
 	private void initTutorialWindow(Stage stage) {
