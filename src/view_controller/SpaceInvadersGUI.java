@@ -9,7 +9,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-public class GUI extends Application {
+public class SpaceInvadersGUI extends Application {
 	private BorderPane pane = new BorderPane();
 	private TutorialPane tutorialPane = new TutorialPane();
 	private Button tutorialButton;
