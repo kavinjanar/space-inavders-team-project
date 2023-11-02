@@ -25,10 +25,12 @@ public class SpaceInvadersGUI extends Application {
 	private ImageView spaceship;
 	private boolean moveLeft = false;
 	private boolean moveRight = false;
+	private boolean fireBullet = false;
 	private final double playerSpeed = 5;
 	private final double bulletSpeed = 5;
 	private ImageView playerBullet;
-	private ArrayList<ImageView> bullets = new ArrayList<>();
+	private ArrayList<ImageView> enemyBullets = new ArrayList<>();
+	private ArrayList<Shield> shields = new ArrayList<>();
 
 	public static void main(String[] args) {
 		launch(args);
@@ -56,14 +58,25 @@ public class SpaceInvadersGUI extends Application {
 		spaceship.setFitHeight(60);
 		spaceship.setPreserveRatio(true);
 		spaceship.setLayoutX(screenWidth / 2);
-		spaceship.setLayoutY(screenHeight * 0.75);
+		spaceship.setLayoutY(screenHeight * 0.80);
 		
 		// Player bullet initialization
 		Bullet plyrBullet = new Bullet((int)spaceship.getLayoutX(), (int)spaceship.getLayoutY(), -1*(int)bulletSpeed);
 		Image bulletImage = new Image("file:images/Bullet.png");
 		playerBullet = new ImageView(bulletImage);
 		playerBullet.setFitWidth(10);
-		playerBullet.setFitHeight(50);
+		playerBullet.setFitHeight(25);
+		
+		// Add shields
+		for (int y = (int)(screenHeight * 0.60); y <= (int)(screenHeight * 0.70); y += (int)(screenHeight * 0.05)) {
+			for (int offset = -1*(int)(screenHeight * 0.05); offset <= (int)(screenHeight * 0.05); offset += (int)(screenHeight * 0.05)) {
+				for (int x = (int)screenWidth / 10; x <= 9*(int)screenWidth / 10; x += (int)screenWidth / 5) {
+					Shield shield = new Shield(x + offset - 12, y, (int)(screenHeight * 0.05));
+					shields.add(shield);
+					pane.getChildren().add(shield.getImageView());
+				}
+			}
+		}
 		
 		pane.getChildren().add(spaceship);
 		pane.getChildren().add(tutorialButton);
@@ -82,13 +95,9 @@ public class SpaceInvadersGUI extends Application {
 			case D:
 				moveRight = true;
 				break;
+				
 			case SHIFT:
-				System.out.println("Player fired bullet");
-				// Reset bullet position if out of bounds
-				if (playerBullet.getLayoutY() < playerBullet.getFitHeight()/2) {
-					playerBullet.setLayoutX(spaceship.getLayoutX() + spaceship.getFitWidth() / 2 - playerBullet.getFitWidth() / 2);
-					playerBullet.setLayoutY(spaceship.getLayoutY() - playerBullet.getFitHeight());
-				}
+				fireBullet = true;
 				break;
 			
 			default:
@@ -104,6 +113,10 @@ public class SpaceInvadersGUI extends Application {
 			
 			case D:
 				moveRight = false;
+				break;
+				
+			case SHIFT:
+				fireBullet = false;
 				break;
 			
 			default:
@@ -122,8 +135,25 @@ public class SpaceInvadersGUI extends Application {
 				
 				spaceship.setLayoutX(spaceship.getLayoutX() + dx);
 				
-				playerBullet.setLayoutY(playerBullet.getLayoutY() + plyrBullet.getSpeed());
-				
+				// Reset bullet position if out of bounds
+				if (playerBullet != null) {
+					if (playerBullet.getLayoutY() < -1*playerBullet.getFitHeight() && fireBullet || bulletHitSomething(playerBullet)) {
+						System.out.println("reset bullet");
+						pane.getChildren().remove(playerBullet);
+						playerBullet = null;
+					}
+					else
+						playerBullet.setLayoutY(playerBullet.getLayoutY() + plyrBullet.getSpeed());
+				}
+				else if (fireBullet) {
+					playerBullet = new ImageView(bulletImage);
+					pane.getChildren().add(playerBullet);
+					playerBullet.setFitWidth(10);
+					playerBullet.setFitHeight(25);
+					playerBullet.setLayoutX(spaceship.getLayoutX() + spaceship.getFitWidth() / 2 - playerBullet.getFitWidth() / 2);
+					playerBullet.setLayoutY(spaceship.getLayoutY() - playerBullet.getFitHeight());
+				}
+
 				double x = spaceship.getLayoutX();
 				double width = spaceship.getBoundsInLocal().getWidth();
 				
@@ -140,6 +170,18 @@ public class SpaceInvadersGUI extends Application {
 		stage.requestFocus();
 		
 //		alienGrid(stage);
+	}
+	
+	private boolean bulletHitSomething(ImageView bullet) {
+		for (Shield shield : shields) {
+			if (playerBullet != null && playerBullet.getLayoutY() <= shield.getY() + shield.getImageView().getFitHeight() 
+			&& playerBullet.getLayoutX() >= shield.getImageView().getLayoutX() - playerBullet.getFitWidth() && playerBullet.getLayoutX() <= shield.getImageView().getLayoutX() + shield.getImageView().getFitWidth()
+			&& shield.getHealth() > 0) {
+				shield.hit();
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private void initTutorialWindow(Stage stage) {
