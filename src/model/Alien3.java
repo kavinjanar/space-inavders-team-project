@@ -2,6 +2,6 @@ package model;
 
 public class Alien3 extends Alien {
     public Alien3() {
-        super("alien3.png");
+        super("file:images/enemy3_1.png", "file:images/enemy3_2.png");
     }
 }

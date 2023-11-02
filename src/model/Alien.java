@@ -6,10 +6,33 @@ import javafx.scene.layout.Pane;
 
 public class Alien extends Pane {
     protected ImageView imageView;
+    protected Image image1;
+    protected Image image2;
+    protected boolean usingFirstImage;
 
-    public Alien(String imageUrl) {
-        Image image = new Image(imageUrl);
-        this.imageView = new ImageView(image);
+    public Alien(String imageUrl1, String imageUrl2) {
+        this.image1 = new Image(imageUrl1);
+        this.image2 = new Image(imageUrl2);
+        
+        // Initially set the image view to the first image
+        this.imageView = new ImageView(image1);
+        this.usingFirstImage = true;
+
+        this.imageView.setFitWidth(50);
+        this.imageView.setFitHeight(50);
         getChildren().add(this.imageView);
+    }
+    
+    /**
+     * switches between image1 and image2, and vice versa
+     */
+    public void switchImage() {
+        if (usingFirstImage) {
+            imageView.setImage(image2);
+            usingFirstImage = false;
+        } else {
+            imageView.setImage(image1);
+            usingFirstImage = true;
+        }
     }
 }

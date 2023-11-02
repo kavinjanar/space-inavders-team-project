@@ -7,6 +7,7 @@ import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
@@ -17,6 +18,10 @@ import javafx.stage.Modality;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import model.*;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.util.Duration;
+
 
 public class SpaceInvadersGUI extends Application {
 	private Pane pane = new Pane();
@@ -31,6 +36,10 @@ public class SpaceInvadersGUI extends Application {
 	private ImageView playerBullet;
 	private ArrayList<ImageView> enemyBullets = new ArrayList<>();
 	private ArrayList<Shield> shields = new ArrayList<>();
+	private Pane alienGridPane = new Pane();
+	private boolean moveAliensRight = true;
+	private final double alienMoveDistance = 20;
+
 
 	public static void main(String[] args) {
 		launch(args);
@@ -169,7 +178,10 @@ public class SpaceInvadersGUI extends Application {
 		stage.show();
 		stage.requestFocus();
 		
-//		alienGrid(stage);
+		// alien stuff
+		alienGrid(stage);
+		moveAlienGrid(stage);
+
 	}
 	
 	private boolean bulletHitSomething(ImageView bullet) {
@@ -205,32 +217,85 @@ public class SpaceInvadersGUI extends Application {
 	}
 
 
-	//Setup grid of aliens
+	/**
+	 * sets up the grid of aliens
+	 * @param stage
+	 */
 	private void alienGrid(Stage stage) {
-		int rows = 5;
-		int cols = 10;
+	    int rows = 5;
+	    int cols = 11;
+	    
+	    double alienWidth = 90; // Width of an individual alien (including spacing)
+	    double alienHeight = 65; // Height of an individual alien (including spacing)
+	    
+	    // total width and height of the alien grid
+	    double gridWidth = alienWidth * cols;
+	    double gridHeight = alienHeight * rows;
+	    
+	    // starting x and y coordinates for the grid
+	    double startX = (stage.getWidth() - gridWidth) / 2;
+	    double startY = (stage.getHeight() - gridHeight) / 5;
+	    
+	    Alien[][] aliens = new Alien[rows][cols];
+	    
+	    // Reset and set up the alien grid pane
+	    alienGridPane.getChildren().clear();
+	    alienGridPane.setLayoutX(startX);
+	    alienGridPane.setLayoutY(startY);
+	    
+	    for(int i = 0; i < rows; i++) {
+	        for(int j = 0; j < cols; j++) {
+	            Alien alien;
 
-		Alien[][] aliens = new Alien[rows][cols];
+	            if (i == 0) {
+	                alien = new Alien3();
+	            } else if (i == 1 || i == 2) {
+	                alien = new Alien2();
+	            } else {
+	                alien = new Alien1();
+	            }
 
-		for(int i = 0; i < rows; i++) {
-			for(int j = 0; j < cols; j++) {
-				Alien alien;
+	            alien.setLayoutX(j * alienWidth);  // x-coordinate relative to alienGridPane
+	            alien.setLayoutY(i * alienHeight);  // y-coordinate relative to alienGridPane
 
-				if (i % 3 == 0) {
-					alien = new Alien1();
-				} else if (i % 3 == 1) {
-					alien = new Alien2();
-				} else {
-					alien = new Alien3();
-				}
+	            aliens[i][j] = alien;
 
-				alien.setLayoutX(j * 50);  // x-coordinate
-				alien.setLayoutY(i * 50);  // y-coordinate
+	            alienGridPane.getChildren().add(alien);
+	        }
+	    }
 
-				aliens[i][j] = alien;
-
-				pane.getChildren().add(alien);
-			}
-		}
+	    pane.getChildren().add(alienGridPane);
 	}
+
+	/**
+	 * moves the grid of aliens left and right
+	 * TODO: make it move up and down as well
+	 * @param stage
+	 */
+	private void moveAlienGrid(Stage stage) {
+	    Timeline moveAliensTimeline = new Timeline(new KeyFrame(Duration.seconds(1), e -> {
+	        for (Node node : alienGridPane.getChildren()) {
+	            if (node instanceof Alien) {
+	                ((Alien) node).switchImage();
+	            }
+	        }
+
+	        if (moveAliensRight) {
+	            alienGridPane.setLayoutX(alienGridPane.getLayoutX() + alienMoveDistance);
+	            if (alienGridPane.getLayoutX() + alienGridPane.getWidth() > (stage.getWidth() + 50)) {
+	                moveAliensRight = false;
+	            }
+	        } else {
+	            alienGridPane.setLayoutX(alienGridPane.getLayoutX() - alienMoveDistance);
+	            if (alienGridPane.getLayoutX() <= 50) {
+	                moveAliensRight = true;
+	            }
+	        }
+	    }));
+
+	    moveAliensTimeline.setCycleCount(Timeline.INDEFINITE);
+	    moveAliensTimeline.play();
+	}
+
+
 }
