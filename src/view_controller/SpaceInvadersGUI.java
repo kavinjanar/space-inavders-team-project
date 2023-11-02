@@ -1,5 +1,7 @@
 package view_controller;
 
+import java.util.ArrayList;
+
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.geometry.Insets;
@@ -14,10 +16,7 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
-import model.Alien;
-import model.Alien1;
-import model.Alien2;
-import model.Alien3;
+import model.*;
 
 public class SpaceInvadersGUI extends Application {
 	private Pane pane = new Pane();
@@ -26,7 +25,10 @@ public class SpaceInvadersGUI extends Application {
 	private ImageView spaceship;
 	private boolean moveLeft = false;
 	private boolean moveRight = false;
-	private final double speed = 5;
+	private final double playerSpeed = 5;
+	private final double bulletSpeed = 5;
+	private ImageView playerBullet;
+	private ArrayList<ImageView> bullets = new ArrayList<>();
 
 	public static void main(String[] args) {
 		launch(args);
@@ -56,13 +58,20 @@ public class SpaceInvadersGUI extends Application {
 		spaceship.setLayoutX(screenWidth / 2);
 		spaceship.setLayoutY(screenHeight * 0.75);
 		
+		// Player bullet initialization
+		Bullet plyrBullet = new Bullet((int)spaceship.getLayoutX(), (int)spaceship.getLayoutY(), -1*(int)bulletSpeed);
+		Image bulletImage = new Image("file:images/Bullet.png");
+		playerBullet = new ImageView(bulletImage);
+		playerBullet.setFitWidth(10);
+		playerBullet.setFitHeight(50);
 		
 		pane.getChildren().add(spaceship);
 		pane.getChildren().add(tutorialButton);
-		
+		pane.getChildren().add(playerBullet);
 		
 
 		Scene scene = new Scene(pane, 600, 400);
+		// Keyboard movement
 		scene.setOnKeyPressed((event)->{
 			switch(event.getCode())
 			{
@@ -72,6 +81,14 @@ public class SpaceInvadersGUI extends Application {
 			
 			case D:
 				moveRight = true;
+				break;
+			case SHIFT:
+				System.out.println("Player fired bullet");
+				// Reset bullet position if out of bounds
+				if (playerBullet.getLayoutY() < playerBullet.getFitHeight()/2) {
+					playerBullet.setLayoutX(spaceship.getLayoutX() + spaceship.getFitWidth() / 2 - playerBullet.getFitWidth() / 2);
+					playerBullet.setLayoutY(spaceship.getLayoutY() - playerBullet.getFitHeight());
+				}
 				break;
 			
 			default:
@@ -93,7 +110,6 @@ public class SpaceInvadersGUI extends Application {
 				break;
 			}
 		});
-		
 		AnimationTimer timer = new AnimationTimer() {
 			
 			@Override
@@ -101,10 +117,12 @@ public class SpaceInvadersGUI extends Application {
 				// TODO Auto-generated method stub
 				int dx = 0;
 				
-				if (moveLeft) dx -= speed;
-				if (moveRight) dx += speed;
+				if (moveLeft) dx -= playerSpeed;
+				if (moveRight) dx += playerSpeed;
 				
 				spaceship.setLayoutX(spaceship.getLayoutX() + dx);
+				
+				playerBullet.setLayoutY(playerBullet.getLayoutY() + plyrBullet.getSpeed());
 				
 				double x = spaceship.getLayoutX();
 				double width = spaceship.getBoundsInLocal().getWidth();
