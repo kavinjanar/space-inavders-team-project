@@ -3,30 +3,36 @@ package view_controller;
 import java.util.ArrayList;
 
 import javafx.animation.AnimationTimer;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Application;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
+import javafx.event.EventHandler;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
-import model.*;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
+import javafx.stage.WindowEvent;
 import javafx.util.Duration;
+import model.Alien;
+import model.Alien1;
+import model.Alien2;
+import model.Alien3;
+import model.Bullet;
+import model.Shield;
 
 
 public class SpaceInvadersGUI extends Application {
 	private Pane pane = new Pane();
 	private TutorialPane tutorialPane = new TutorialPane();
+	private Stage tutorialWindow;
 	private Button tutorialButton;
+	private boolean isTutorialOpen = false;
 	private ImageView spaceship;
 	private boolean moveLeft = false;
 	private boolean moveRight = false;
@@ -197,13 +203,17 @@ public class SpaceInvadersGUI extends Application {
 	}
 
 	private void initTutorialWindow(Stage stage) {
+		Scene tutorialScene = new Scene(tutorialPane, 400, 300);
+		tutorialWindow = new Stage();
+		tutorialWindow.initOwner(stage);
+		tutorialWindow.initModality(Modality.WINDOW_MODAL);
+		
 		tutorialButton.setOnAction(event -> {
-			Scene tutorialScene = new Scene(tutorialPane, 400, 300);
-			Stage tutorialWindow = new Stage();
-
+			if (isTutorialOpen)
+				return;
+			
 			// Forces application focus on tutorial window
-			tutorialWindow.initOwner(stage);
-			tutorialWindow.initModality(Modality.WINDOW_MODAL);
+	
 
 			tutorialWindow.setTitle("Tutorial");
 			tutorialWindow.setScene(tutorialScene);
@@ -213,6 +223,15 @@ public class SpaceInvadersGUI extends Application {
 			tutorialWindow.setX(stage.getX() + 50);
 			tutorialWindow.setY(stage.getY() + 50);
 			tutorialWindow.show();
+			
+			isTutorialOpen = true;
+		});
+		
+		tutorialWindow.setOnCloseRequest(new EventHandler<WindowEvent>() {
+		    @Override
+		    public void handle(WindowEvent e) {
+		    	isTutorialOpen = false;
+		    }
 		});
 	}
 
@@ -296,6 +315,5 @@ public class SpaceInvadersGUI extends Application {
 	    moveAliensTimeline.setCycleCount(Timeline.INDEFINITE);
 	    moveAliensTimeline.play();
 	}
-
 
 }
