@@ -11,11 +11,15 @@ public class SpaceShip extends ImageView {
 		lives = 3;
 	}
 	
-	public void hit() {
+	public void hitShip() {
 		lives--;
 	}
 	
 	public int getLives() { return lives; }
 	
-	public boolean outOfLives() { return lives == 0; }
+	public void addLife() {
+		lives++;
+	}
+	
+	public boolean isDestroyed() { return lives <= 0; }
 }
