@@ -4,25 +4,21 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import javafx.animation.AnimationTimer;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Application;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
-import model.*;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
 import javafx.util.Duration;
-
+import model.*;
 
 public class SpaceInvadersGUI extends Application {
 	private Pane pane = new Pane();
@@ -42,106 +38,103 @@ public class SpaceInvadersGUI extends Application {
 	private final double alienMoveDistance = 20;
 	private Alien[][] aliens;
 	private Random randGen;
-
+	
 	public static void main(String[] args) {
 		launch(args);
 	}
 
 	@Override
 	public void start(Stage stage) throws Exception {
-		
+
 		// screen parameters
 		Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
 		double screenWidth = screenBounds.getWidth();
 		double screenHeight = screenBounds.getHeight();
-		
+
 		tutorialButton = new Button("Tutorial");
 		tutorialButton.setPrefSize(100, 40);
 		tutorialButton.setLayoutX(screenWidth / 2 - tutorialButton.getPrefWidth() / 2);
 		tutorialButton.setLayoutY(screenHeight * 0.95);
 		initTutorialWindow(stage);
-		
+
 		// space ship initialization
 		Image spaceshipImage = new Image("file:images/Spaceship.png");
 		spaceship = new SpaceShip(spaceshipImage);
 		System.out.println("Image loaded? " + spaceshipImage.isError());
-		
+
 		spaceship.setFitWidth(50);
 		spaceship.setFitHeight(60);
 		spaceship.setPreserveRatio(true);
 		spaceship.setLayoutX(screenWidth / 2 - spaceship.getFitWidth() / 2);
 		spaceship.setLayoutY(screenHeight * 0.80);
-		
-		// Player bullet initialization
-		//plyrBullet = new Bullet((int)spaceship.getLayoutX(), (int)spaceship.getLayoutY(), -1*(int)bulletSpeed, false);
-		
+
 		// Add shields
-		for (int y = (int)(screenHeight * 0.60); y <= (int)(screenHeight * 0.70); y += (int)(screenHeight * 0.05)) {
-			for (int offset = -1*(int)(screenHeight * 0.05); offset <= (int)(screenHeight * 0.05); offset += (int)(screenHeight * 0.05)) {
-				for (int x = (int)screenWidth / 10; x <= 9*(int)screenWidth / 10; x += (int)screenWidth / 5) {
-					Shield shield = new Shield(x + offset - 12, y, (int)(screenHeight * 0.05));
+		for (int y = (int) (screenHeight * 0.60); y <= (int) (screenHeight * 0.70); y += (int) (screenHeight * 0.05)) {
+			for (int offset = -1 * (int) (screenHeight * 0.05); offset <= (int) (screenHeight
+					* 0.05); offset += (int) (screenHeight * 0.05)) {
+				for (int x = (int) screenWidth / 10; x <= 9 * (int) screenWidth / 10; x += (int) screenWidth / 5) {
+					Shield shield = new Shield(x + offset - 12, y, (int) (screenHeight * 0.05));
 					shields.add(shield);
 					pane.getChildren().add(shield);
 				}
 			}
 		}
-		
+
 		pane.getChildren().add(spaceship);
 		pane.getChildren().add(tutorialButton);
-		
 
 		Scene scene = new Scene(pane, 600, 400);
 		// Keyboard movement
-		scene.setOnKeyPressed((event)->{
-			switch(event.getCode())
-			{
+		scene.setOnKeyPressed((event) -> {
+			switch (event.getCode()) {
 			case A:
 				moveLeft = true;
 				break;
-			
+
 			case D:
 				moveRight = true;
 				break;
-				
+
 			case SHIFT:
 				fireBullet = true;
 				break;
-			
+
 			default:
 				break;
 			}
 		});
-		scene.setOnKeyReleased((event)->{
-			switch(event.getCode())
-			{
+		scene.setOnKeyReleased((event) -> {
+			switch (event.getCode()) {
 			case A:
 				moveLeft = false;
 				break;
-			
+
 			case D:
 				moveRight = false;
 				break;
-				
+
 			case SHIFT:
 				fireBullet = false;
 				break;
-			
+
 			default:
 				break;
 			}
 		});
 		AnimationTimer timer = new AnimationTimer() {
-			
+
 			@Override
 			public void handle(long arg0) {
 				// TODO Auto-generated method stub
 				int dx = 0;
-				
-				if (moveLeft) dx -= playerSpeed;
-				if (moveRight) dx += playerSpeed;
-				
+
+				if (moveLeft)
+					dx -= playerSpeed;
+				if (moveRight)
+					dx += playerSpeed;
+
 				spaceship.setLayoutX(spaceship.getLayoutX() + dx);
-				
+
 				// Reset bullet position if out of bounds
 				if (plyrBullet != null) {
 					ImageView playerBullet = plyrBullet.getImageView();
@@ -176,26 +169,28 @@ public class SpaceInvadersGUI extends Application {
 
 				double x = spaceship.getLayoutX();
 				double width = spaceship.getBoundsInLocal().getWidth();
-				
-				if (x < 0) spaceship.setLayoutX(0);
-				if (x + width > screenWidth) spaceship.setLayoutX(screenWidth - width);
+
+				if (x < 0)
+					spaceship.setLayoutX(0);
+				if (x + width > screenWidth)
+					spaceship.setLayoutX(screenWidth - width);
 			}
 		};
 		timer.start();
-		
+
 		stage.setFullScreen(true);
 		stage.setTitle("Space Invaders");
 		stage.setScene(scene);
 		stage.show();
 		stage.requestFocus();
-		
+
 		// alien stuff
 		randGen = new Random(System.currentTimeMillis());
 		alienGrid(stage);
 		moveAlienGrid(stage);
 
 	}
-	
+		
 	private boolean bulletHitSomething(Bullet bullet) {
 		for (Shield shield : shields) {
 			double shieldX = shield.getLayoutX();
@@ -241,14 +236,14 @@ public class SpaceInvadersGUI extends Application {
 	}
 
 	private void initTutorialWindow(Stage stage) {
+		Scene tutorialScene = new Scene(tutorialPane, 400, 300);
+		Stage tutorialWindow = new Stage();
+
+		// Forces application focus on tutorial window
+		tutorialWindow.initOwner(stage);
+		tutorialWindow.initModality(Modality.WINDOW_MODAL);
+
 		tutorialButton.setOnAction(event -> {
-			Scene tutorialScene = new Scene(tutorialPane, 400, 300);
-			Stage tutorialWindow = new Stage();
-
-			// Forces application focus on tutorial window
-			tutorialWindow.initOwner(stage);
-			tutorialWindow.initModality(Modality.WINDOW_MODAL);
-
 			tutorialWindow.setTitle("Tutorial");
 			tutorialWindow.setScene(tutorialScene);
 			tutorialWindow.setHeight(300);
@@ -260,9 +255,9 @@ public class SpaceInvadersGUI extends Application {
 		});
 	}
 
-
 	/**
 	 * sets up the grid of aliens
+	 * 
 	 * @param stage
 	 */
 	private void alienGrid(Stage stage) {
@@ -286,34 +281,35 @@ public class SpaceInvadersGUI extends Application {
 	    alienGridPane.getChildren().clear();
 	    alienGridPane.setLayoutX(startX);
 	    alienGridPane.setLayoutY(startY);
-	    
-	    for(int i = 0; i < rows; i++) {
-	        for(int j = 0; j < cols; j++) {
-	            Alien alien;
 
-	            if (i == 0) {
-	                alien = new Alien3();
-	            } else if (i == 1 || i == 2) {
-	                alien = new Alien2();
-	            } else {
-	                alien = new Alien1();
-	            }
+		for (int i = 0; i < rows; i++) {
+			for (int j = 0; j < cols; j++) {
+				Alien alien;
 
-	            alien.setLayoutX(j * alienWidth);  // x-coordinate relative to alienGridPane
-	            alien.setLayoutY(i * alienHeight);  // y-coordinate relative to alienGridPane
+				if (i == 0) {
+					alien = new Alien3();
+				} else if (i == 1 || i == 2) {
+					alien = new Alien2();
+				} else {
+					alien = new Alien1();
+				}
 
-	            aliens[i][j] = alien;
+				alien.setLayoutX(j * alienWidth); // x-coordinate relative to alienGridPane
+				alien.setLayoutY(i * alienHeight); // y-coordinate relative to alienGridPane
 
-	            alienGridPane.getChildren().add(alien);
-	        }
-	    }
+				aliens[i][j] = alien;
 
-	    pane.getChildren().add(alienGridPane);
+				alienGridPane.getChildren().add(alien);
+			}
+		}
+
+		pane.getChildren().add(alienGridPane);
 	}
 
 	/**
-	 * moves the grid of aliens left and right
-	 * TODO: make it move up and down as well
+	 * moves the grid of aliens left and right TODO: make it move up and down as
+	 * well
+	 * 
 	 * @param stage
 	 */
 	private void moveAlienGrid(Stage stage) {
@@ -347,9 +343,8 @@ public class SpaceInvadersGUI extends Application {
 	        }
 	    }));
 
-	    moveAliensTimeline.setCycleCount(Timeline.INDEFINITE);
-	    moveAliensTimeline.play();
+		moveAliensTimeline.setCycleCount(Timeline.INDEFINITE);
+		moveAliensTimeline.play();
 	}
-
 
 }
