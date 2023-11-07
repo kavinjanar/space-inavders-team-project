@@ -29,7 +29,7 @@ public class SpaceInvadersGUI extends Application {
 	private boolean moveRight = false;
 	private boolean fireBullet = false;
 	private final double playerSpeed = 5;
-	private final double bulletSpeed = 6;
+	private final double bulletSpeed = 12;
 	private Bullet plyrBullet;
 	private ArrayList<Bullet> enemyBullets = new ArrayList<>();
 	private ArrayList<Shield> shields = new ArrayList<>();
@@ -69,10 +69,12 @@ public class SpaceInvadersGUI extends Application {
 		spaceship.setLayoutY(screenHeight * 0.80);
 
 		// Add shields
-		for (int y = (int) (screenHeight * 0.60); y <= (int) (screenHeight * 0.70); y += (int) (screenHeight * 0.05)) {
+		for (int y = (int) (screenHeight * 0.65); y <= (int) (screenHeight * 0.70); y += (int) (screenHeight * 0.05)) {
 			for (int offset = -1 * (int) (screenHeight * 0.05); offset <= (int) (screenHeight
 					* 0.05); offset += (int) (screenHeight * 0.05)) {
 				for (int x = (int) screenWidth / 10; x <= 9 * (int) screenWidth / 10; x += (int) screenWidth / 5) {
+					if (y > (int) (screenHeight * 0.65) && offset == 0)
+						continue;
 					Shield shield = new Shield(x + offset - 12, y, (int) (screenHeight * 0.05));
 					shields.add(shield);
 					pane.getChildren().add(shield);
