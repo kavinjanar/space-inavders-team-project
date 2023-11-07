@@ -32,6 +32,6 @@ public class Shield extends ImageView {
 	}
 	
 	private void updateImage() {
-		this.setImage(new Image("file:images/Shield" + health + ".png"));
+		this.setImage(new Image("file:images/newShield" + health + ".png"));
 	}
 }
