@@ -205,8 +205,8 @@ public class SpaceInvadersGUI extends Application {
 		}
 		if (bullet.isFromEnemy()) {
 			if (bullet.withinBounds(spaceship.getLayoutX(), spaceship.getLayoutY(), spaceship.getLayoutX() + spaceship.getFitWidth(), spaceship.getLayoutY() + spaceship.getFitHeight())) {
-				spaceship.hit();
-				if (spaceship.outOfLives()) {
+				spaceship.hitShip();
+				if (spaceship.isDestroyed()) {
 					// show game over screen
 				}
 				double screenWidth = Screen.getPrimary().getVisualBounds().getWidth();
