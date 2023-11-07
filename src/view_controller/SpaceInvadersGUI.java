@@ -48,7 +48,7 @@ public class SpaceInvadersGUI extends Application {
 
 	@Override
 	public void start(Stage stage) throws Exception {
-
+		pane.setStyle("-fx-background-color: black;");
 		// screen parameters
 		Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
 		double screenWidth = screenBounds.getWidth();
@@ -157,6 +157,7 @@ public class SpaceInvadersGUI extends Application {
 							-1*(int)bulletSpeed, 
 							false);
 					pane.getChildren().add(plyrBullet.getImageView());
+					soundPlayer.playShootSound();
 				}
 				
 				int i = 0;
@@ -215,7 +216,7 @@ public class SpaceInvadersGUI extends Application {
 			if (bullet.withinBounds(spaceship.getLayoutX(), spaceship.getLayoutY(), spaceship.getLayoutX() + spaceship.getFitWidth(), spaceship.getLayoutY() + spaceship.getFitHeight())) {
 				spaceship.hitShip();
 				if (spaceship.isDestroyed()) {
-					// show game over screen
+					soundPlayer.playExplosionSound();
 				}
 				double screenWidth = Screen.getPrimary().getVisualBounds().getWidth();
 				spaceship.setLayoutX(screenWidth / 2 - spaceship.getFitWidth() / 2);
@@ -238,6 +239,7 @@ public class SpaceInvadersGUI extends Application {
 								System.out.println("Increasing difficulty");
 								increaseDifficulty(stage);
 							}
+							soundPlayer.playInvaderKilledSound();
 							return true;
 						}
 					}
