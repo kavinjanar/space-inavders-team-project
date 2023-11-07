@@ -40,6 +40,7 @@ public class SpaceInvadersGUI extends Application {
 	private Random randGen;
 	private  double pauseDuration = 1;
 	private Timeline currTimeline;
+	private SoundPlayer soundPlayer;
 	
 	public static void main(String[] args) {
 		launch(args);
@@ -185,6 +186,9 @@ public class SpaceInvadersGUI extends Application {
 		stage.setScene(scene);
 		stage.show();
 		stage.requestFocus();
+		
+		soundPlayer = new SoundPlayer();
+		soundPlayer.playThemeSongLoop();
 
 		// alien stuff
 		randGen = new Random(System.currentTimeMillis());
