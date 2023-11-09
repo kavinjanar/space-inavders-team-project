@@ -43,7 +43,7 @@ public class SpaceInvadersGUI extends Application {
 	private final double alienMoveDistance = 20;
 	private Alien[][] aliens;
 	private Random randGen;
-	private  double pauseDuration = 1;
+	private  double pauseDuration = .5;
 	private Timeline currTimeline;
 	private SoundPlayer soundPlayer;
 	private Label scoreLabel = new Label("Score: ");
@@ -409,6 +409,8 @@ public class SpaceInvadersGUI extends Application {
 	 * @param stage
 	 */
 	private Timeline moveAlienGrid(Stage stage) {
+		final double alienDropDownDistance = 20;
+		
 	    Timeline moveAliensTimeline = new Timeline(new KeyFrame(Duration.seconds(pauseDuration), e -> {
 	    	if (alienGridPane.getChildren().size() == 0)
 	    		alienGrid(stage);
@@ -430,11 +432,13 @@ public class SpaceInvadersGUI extends Application {
 	            alienGridPane.setLayoutX(alienGridPane.getLayoutX() + alienMoveDistance);
 	            if (alienGridPane.getLayoutX() + alienGridPane.getWidth() >= (stage.getWidth() - 50)) {
 	                moveAliensRight = false;
+	                alienGridPane.setLayoutY(alienGridPane.getLayoutY() + alienDropDownDistance);
 	            }
 	        } else {
 	            alienGridPane.setLayoutX(alienGridPane.getLayoutX() - alienMoveDistance);
 	            if (alienGridPane.getLayoutX() <= 50) {
 	                moveAliensRight = true;
+	                alienGridPane.setLayoutY(alienGridPane.getLayoutY() + alienDropDownDistance);
 	            }
 	        }
 	    }));
