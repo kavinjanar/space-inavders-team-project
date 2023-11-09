@@ -43,7 +43,7 @@ public class SpaceInvadersGUI extends Application {
 	private final double alienMoveDistance = 20;
 	private Alien[][] aliens;
 	private Random randGen;
-	private  double pauseDuration = .5;
+	private  double pauseDuration = 1;
 	private Timeline currTimeline;
 	private SoundPlayer soundPlayer;
 	private Label scoreLabel = new Label("Score: ");
