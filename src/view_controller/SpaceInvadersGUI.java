@@ -7,13 +7,18 @@ import javafx.animation.AnimationTimer;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
+import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.stage.Modality;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
@@ -41,6 +46,15 @@ public class SpaceInvadersGUI extends Application {
 	private  double pauseDuration = 1;
 	private Timeline currTimeline;
 	private SoundPlayer soundPlayer;
+	private Label scoreLabel = new Label("Score: ");
+	private ArrayList<ImageView> livesList = new ArrayList<ImageView>();
+	private int score;
+	private AnimationTimer timer;
+	
+	// screen dimensions
+	private Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
+	private double screenWidth = screenBounds.getWidth();
+	private double screenHeight = screenBounds.getHeight();
 	
 	public static void main(String[] args) {
 		launch(args);
@@ -49,10 +63,13 @@ public class SpaceInvadersGUI extends Application {
 	@Override
 	public void start(Stage stage) throws Exception {
 		pane.setStyle("-fx-background-color: black;");
-		// screen parameters
-		Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
-		double screenWidth = screenBounds.getWidth();
-		double screenHeight = screenBounds.getHeight();
+		
+		// score label setup
+		Font scoreFont = Font.font("Courier New", FontWeight.BOLD, 64);
+		scoreLabel.setFont(scoreFont);
+		scoreLabel.setStyle("-fx-text-fill: #62de6d");
+		scoreLabel.setLayoutX(screenWidth / 2);
+		scoreLabel.setLayoutY(20);
 
 		tutorialButton = new Button("Tutorial");
 		tutorialButton.setPrefSize(100, 40);
@@ -70,6 +87,8 @@ public class SpaceInvadersGUI extends Application {
 		spaceship.setPreserveRatio(true);
 		spaceship.setLayoutX(screenWidth / 2 - spaceship.getFitWidth() / 2);
 		spaceship.setLayoutY(screenHeight * 0.80);
+		
+		setLives();
 
 		// Add shields
 		for (int y = (int) (screenHeight * 0.65); y <= (int) (screenHeight * 0.70); y += (int) (screenHeight * 0.05)) {
@@ -87,6 +106,7 @@ public class SpaceInvadersGUI extends Application {
 
 		pane.getChildren().add(spaceship);
 		pane.getChildren().add(tutorialButton);
+		pane.getChildren().add(scoreLabel);
 
 		Scene scene = new Scene(pane, 600, 400);
 		// Keyboard movement
@@ -126,7 +146,7 @@ public class SpaceInvadersGUI extends Application {
 				break;
 			}
 		});
-		AnimationTimer timer = new AnimationTimer() {
+		timer = new AnimationTimer() {
 
 			@Override
 			public void handle(long arg0) {
@@ -199,6 +219,27 @@ public class SpaceInvadersGUI extends Application {
 		currTimeline = moveAlienGrid(stage);
 
 	}
+	
+	private void setLives()
+	{
+		Image lifeImage = new Image("file:images/Life.png");
+		
+		for (ImageView life : livesList)
+		{
+			pane.getChildren().remove(life);
+		}
+		livesList.clear();
+		for (int i = 0; i < spaceship.getLives(); i++)
+		{
+			ImageView life = new ImageView(lifeImage);
+			life.setFitHeight(40);
+			life.setFitWidth(40);
+			life.setLayoutY(screenHeight * 0.95);
+			life.setLayoutX((screenWidth * 0.05) + (50 * i));
+			pane.getChildren().add(life);
+			livesList.add(life);
+		}
+	}
 		
 	private boolean bulletHitSomething(Bullet bullet, Stage stage) {
 		for (Shield shield : shields) {
@@ -217,8 +258,9 @@ public class SpaceInvadersGUI extends Application {
 				spaceship.hitShip();
 				if (spaceship.isDestroyed()) {
 					soundPlayer.playExplosionSound();
+					endGame(stage);
 				}
-				double screenWidth = Screen.getPrimary().getVisualBounds().getWidth();
+				setLives();
 				spaceship.setLayoutX(screenWidth / 2 - spaceship.getFitWidth() / 2);
 				return true;
 			}
@@ -235,6 +277,16 @@ public class SpaceInvadersGUI extends Application {
 	                        if (aliens[i][j].isAlive()) {
 	                            aliens[i][j].explode(); // Change the alien to an explosion image and mark it as not alive
 	                            soundPlayer.playExplosionSound(); // Play explosion sound
+	                            
+	                            if (i == 0)
+	                            {
+	                            	incrementScore(30);
+	                            }else if (i == 1 || i == 2)
+	                            {
+	                            	incrementScore(20);
+	                            }else{
+	                            	incrementScore(10);
+	                            }
 
 	                            final int finalI = i;
 	                            final int finalJ = j;
@@ -271,6 +323,12 @@ public class SpaceInvadersGUI extends Application {
 			return true;
 		}
 		return false;
+	}
+	
+	private void incrementScore(int increment)
+	{
+		score += increment;
+		scoreLabel.setText("" + score);
 	}
 
 	private void initTutorialWindow(Stage stage) {
@@ -384,6 +442,38 @@ public class SpaceInvadersGUI extends Application {
 		moveAliensTimeline.setCycleCount(Timeline.INDEFINITE);
 		moveAliensTimeline.play();
 		return moveAliensTimeline;
+	}
+	
+	private void endGame(Stage stage)
+	{
+		timer.stop();
+		currTimeline.stop();
+		
+		Stage gameOverStage = new Stage();
+		gameOverStage.initModality(Modality.WINDOW_MODAL);
+		
+		VBox vBox = new VBox(10);
+		vBox.setAlignment(Pos.CENTER);
+		Label gameOverLabel = new Label("Game Over!");
+		Button retryButton = new Button("Try Again");
+		Button closeButton = new Button("Close");
+		closeButton.setOnAction((event) -> {
+			gameOverStage.close();
+		});
+		retryButton.setOnAction((event) -> {
+			
+		});
+		vBox.getChildren().addAll(gameOverLabel, closeButton);
+		
+		Scene gameOverScene = new Scene(vBox, 300, 200);
+		gameOverStage.setTitle("Game Over");
+		gameOverStage.setScene(gameOverScene);
+		gameOverStage.initOwner(stage);
+		gameOverStage.setX(stage.getX() + stage.getWidth() / 2 - gameOverStage.getWidth() / 2);
+		gameOverStage.setY(stage.getY() + stage.getHeight() / 2 - gameOverStage.getHeight() / 2);
+		gameOverStage.show();
+		gameOverStage.requestFocus();
+
 	}
 	
 	private void increaseDifficulty(Stage stage)
