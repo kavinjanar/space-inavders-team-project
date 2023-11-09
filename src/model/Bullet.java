@@ -15,7 +15,10 @@ public class Bullet {
 		this.startY = y;
 		this.speed = speed;
 		this.fromEnemy = fromEnemy;
-		image = new ImageView(new Image("file:images/Bullet.png"));
+		if (fromEnemy)
+			image = new ImageView(new Image("file:images/enemylaser.png"));
+		else
+			image = new ImageView(new Image("file:images/Bullet.png"));
 		image.setFitWidth(10);
 		image.setFitHeight(25);
 		image.setLayoutX(x);
