@@ -18,7 +18,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
 import javafx.stage.Modality;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
@@ -46,7 +45,9 @@ public class SpaceInvadersGUI extends Application {
 	private  double pauseDuration = 1;
 	private Timeline currTimeline;
 	private SoundPlayer soundPlayer;
-	private Label scoreLabel = new Label("Score: ");
+	private Label scoreLabel = new Label("Score");
+	private Label scoreValueLabel = new Label("0");
+	private Label livesLabel = new Label("Lives");
 	private ArrayList<ImageView> livesList = new ArrayList<ImageView>();
 	private int score;
 	private AnimationTimer timer;
@@ -65,11 +66,21 @@ public class SpaceInvadersGUI extends Application {
 		pane.setStyle("-fx-background-color: black;");
 		
 		// score label setup
-		Font scoreFont = Font.font("Courier New", FontWeight.BOLD, 64);
+		Font scoreFont = Font.loadFont("file:fonts/space_invaders.ttf", 44);
 		scoreLabel.setFont(scoreFont);
-		scoreLabel.setStyle("-fx-text-fill: #62de6d");
-		scoreLabel.setLayoutX(screenWidth / 2);
+		scoreLabel.setStyle("-fx-text-fill: #FFFFFF");
+		scoreLabel.setLayoutX(50);
 		scoreLabel.setLayoutY(20);
+		
+		scoreValueLabel.setFont(scoreFont);
+		scoreValueLabel.setStyle("-fx-text-fill: #00ff5a");
+		scoreValueLabel.setLayoutX(240);
+		scoreValueLabel.setLayoutY(20);
+		
+		livesLabel.setFont(scoreFont);
+		livesLabel.setStyle("-fx-text-fill: #FFFFFF");
+		livesLabel.setLayoutX(screenWidth - 370);
+		livesLabel.setLayoutY(20);
 
 		tutorialButton = new Button("Tutorial");
 		tutorialButton.setPrefSize(100, 40);
@@ -107,6 +118,8 @@ public class SpaceInvadersGUI extends Application {
 		pane.getChildren().add(spaceship);
 		pane.getChildren().add(tutorialButton);
 		pane.getChildren().add(scoreLabel);
+		pane.getChildren().add(scoreValueLabel);
+		pane.getChildren().add(livesLabel);
 
 		Scene scene = new Scene(pane, 600, 400);
 		// Keyboard movement
@@ -234,8 +247,8 @@ public class SpaceInvadersGUI extends Application {
 			ImageView life = new ImageView(lifeImage);
 			life.setFitHeight(40);
 			life.setFitWidth(40);
-			life.setLayoutY(screenHeight * 0.95);
-			life.setLayoutX((screenWidth * 0.05) + (50 * i));
+			life.setLayoutY(35);
+			life.setLayoutX((screenWidth - (screenWidth * 0.06)) - (50 * i));
 			pane.getChildren().add(life);
 			livesList.add(life);
 		}
@@ -328,7 +341,7 @@ public class SpaceInvadersGUI extends Application {
 	private void incrementScore(int increment)
 	{
 		score += increment;
-		scoreLabel.setText("" + score);
+		scoreValueLabel.setText("" + score);
 	}
 
 	private void initTutorialWindow(Stage stage) {
