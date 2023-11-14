@@ -10,6 +10,7 @@ import javafx.application.Application;
 import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -22,7 +23,14 @@ import javafx.stage.Modality;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import model.*;
+import model.Alien;
+import model.Alien1;
+import model.Alien2;
+import model.Alien3;
+import model.Bullet;
+import model.Shield;
+import model.SoundPlayer;
+import model.SpaceShip;
 
 public class SpaceInvadersGUI extends Application {
 	private Pane pane = new Pane();
@@ -51,6 +59,8 @@ public class SpaceInvadersGUI extends Application {
 	private ArrayList<ImageView> livesList = new ArrayList<ImageView>();
 	private int score;
 	private AnimationTimer timer;
+	
+	private MainMenuPane mainMenu;
 	
 	// screen dimensions
 	private Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
@@ -120,8 +130,19 @@ public class SpaceInvadersGUI extends Application {
 		pane.getChildren().add(scoreLabel);
 		pane.getChildren().add(scoreValueLabel);
 		pane.getChildren().add(livesLabel);
+		
+		Parent parent = pane;
+		
+		Scene scene = new Scene(parent, screenWidth, screenHeight);
 
-		Scene scene = new Scene(pane, 600, 400);
+		mainMenu = new MainMenuPane();
+		mainMenu.setOnMousePressed(event -> {
+			stage.setScene(scene);
+			stage.setFullScreen(true);
+		});
+		
+		Scene menuScene = new Scene(mainMenu, screenWidth, screenHeight);
+
 		// Keyboard movement
 		scene.setOnKeyPressed((event) -> {
 			switch (event.getCode()) {
@@ -219,7 +240,7 @@ public class SpaceInvadersGUI extends Application {
 
 		stage.setFullScreen(true);
 		stage.setTitle("Space Invaders");
-		stage.setScene(scene);
+		stage.setScene(menuScene);
 		stage.show();
 		stage.requestFocus();
 		
