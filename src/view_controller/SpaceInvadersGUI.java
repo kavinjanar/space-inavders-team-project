@@ -333,7 +333,7 @@ public class SpaceInvadersGUI extends Application {
 		if (bullet.isFromEnemy()) {
 			if (bullet.withinBounds(spaceship1.getLayoutX(), spaceship1.getLayoutY(), spaceship1.getLayoutX() + spaceship1.getFitWidth(), spaceship1.getLayoutY() + spaceship1.getFitHeight())) {
 				spaceship1.hitShip();
-				if (spaceship1.isDestroyed()) {
+				if (spaceship1.isDestroyed() && (spaceship2 != null && spaceship2.isDestroyed())) {
 					soundPlayer.playExplosionSound();
 					endGame(stage);
 				}
