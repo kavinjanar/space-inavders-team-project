@@ -39,7 +39,6 @@ public class SpaceInvadersGUI extends Application {
 	private Pane pane = new Pane();
 	private StackPane basePane = new StackPane();
 	private TutorialPane tutorialPane = new TutorialPane();
-	private Button tutorialButton;
 	private int numPlayers = 2;
 	private SpaceShip spaceship1;
 	private SpaceShip spaceship2;
@@ -96,12 +95,6 @@ public class SpaceInvadersGUI extends Application {
 		livesLabel.setLayoutX(screenWidth - 370);
 		livesLabel.setLayoutY(20);
 
-		tutorialButton = new Button("Tutorial");
-		tutorialButton.setPrefSize(100, 40);
-		tutorialButton.setLayoutX(screenWidth / 2 - tutorialButton.getPrefWidth() / 2);
-		tutorialButton.setLayoutY(screenHeight * 0.95);
-		initTutorialWindow(stage);
-
 		// space ship initialization		
 		Image spaceshipImage = new Image("file:images/Spaceship.png");
 		spaceship1 = new SpaceShip(spaceshipImage);
@@ -140,7 +133,6 @@ public class SpaceInvadersGUI extends Application {
 			}
 		}
 
-		pane.getChildren().add(tutorialButton);
 		pane.getChildren().add(scoreLabel);
 		pane.getChildren().add(scoreValueLabel);
 		pane.getChildren().add(livesLabel);
@@ -472,26 +464,6 @@ public class SpaceInvadersGUI extends Application {
 	{
 		score += increment;
 		scoreValueLabel.setText("" + score);
-	}
-
-	private void initTutorialWindow(Stage stage) {
-		Scene tutorialScene = new Scene(tutorialPane, 400, 300);
-		Stage tutorialWindow = new Stage();
-
-		// Forces application focus on tutorial window
-		tutorialWindow.initOwner(stage);
-		tutorialWindow.initModality(Modality.WINDOW_MODAL);
-
-		tutorialButton.setOnMouseClicked(event -> {
-			tutorialWindow.setTitle("Tutorial");
-			tutorialWindow.setScene(tutorialScene);
-			tutorialWindow.setHeight(300);
-			tutorialWindow.setWidth(400);
-			tutorialWindow.setResizable(false);
-			tutorialWindow.setX(stage.getX() + 50);
-			tutorialWindow.setY(stage.getY() + 50);
-			tutorialWindow.show();
-		});
 	}
 
 	/**
