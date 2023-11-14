@@ -15,6 +15,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -135,67 +136,79 @@ public class SpaceInvadersGUI extends Application {
 		Scene scene = new Scene(pane, 600, 400);
 		// Keyboard movement
 		scene.addEventFilter(KeyEvent.KEY_PRESSED, (KeyEvent event) -> {
-			switch (event.getCode()) {
-			case A:
-				spaceship1.moveLeft = true;
-				break;
-			
-			case D:
-				spaceship1.moveRight = true;
-				break;
-
-			case LEFT:
-				if (spaceship2 != null)
+			if (!spaceship1.isDestroyed()) {
+				switch (event.getCode()) {
+				case A:
+					spaceship1.moveLeft = true;
+					break;
+				
+				case D:
+					spaceship1.moveRight = true;
+					break;
+					
+				case SHIFT:
+					fireBullet1 = true;
+					break;
+				
+				default:
+					break;
+				}
+			}
+			if (!spaceship2.isDestroyed()) {
+				switch (event.getCode()) {
+				case LEFT:
 					spaceship2.moveLeft = true;
-				break;
+					break;
 
-			case RIGHT:
-				if (spaceship2 != null)
+				case RIGHT:
 					spaceship2.moveRight = true;
-				break;
-				
-			case SHIFT:
-				fireBullet1 = true;
-				break;
-				
-			case SPACE:
-				fireBullet2 = true;
-				break;
+					break;
+					
+				case SPACE:
+					fireBullet2 = true;
+					break;
 
-			default:
-				break;
+				default:
+					break;
+				}
 			}
 		});
 		scene.addEventFilter(KeyEvent.KEY_RELEASED, (KeyEvent event) -> {
-			switch (event.getCode()) {
-			case A:
-				spaceship1.moveLeft = false;
-				break;
-			
-			case D:
-				spaceship1.moveRight = false;
-				break;
+			if (!spaceship1.isDestroyed()) {
+				switch (event.getCode()) {
+				case A:
+					spaceship1.moveLeft = false;
+					break;
 				
-			case LEFT:
-				if (spaceship2 != null)
+				case D:
+					spaceship1.moveRight = false;
+					break;
+					
+				case SHIFT:
+					fireBullet1 = false;
+					break;
+				
+				default:
+					break;
+				}
+			}
+			if (!spaceship2.isDestroyed()) {
+				switch (event.getCode()) {
+				case LEFT:
 					spaceship2.moveLeft = false;
-				break;
+					break;
 
-			case RIGHT:
-				if (spaceship2 != null)
+				case RIGHT:
 					spaceship2.moveRight = false;
-				break;
-			
-			case SHIFT:
-				fireBullet1 = false;
-				break;
-				
-			case SPACE:
-				fireBullet2 = false;
-				break;
+					break;
+					
+				case SPACE:
+					fireBullet2 = false;
+					break;
 
-			default:
-				break;
+				default:
+					break;
+				}
 			}
 		});
 		timer = new AnimationTimer() {
@@ -331,21 +344,39 @@ public class SpaceInvadersGUI extends Application {
 			}
 		}
 		if (bullet.isFromEnemy()) {
-			if (bullet.withinBounds(spaceship1.getLayoutX(), spaceship1.getLayoutY(), spaceship1.getLayoutX() + spaceship1.getFitWidth(), spaceship1.getLayoutY() + spaceship1.getFitHeight())) {
+			if (!spaceship1.isDisabled() && bullet.withinBounds(spaceship1.getLayoutX(), spaceship1.getLayoutY(), spaceship1.getLayoutX() + spaceship1.getFitWidth(), spaceship1.getLayoutY() + spaceship1.getFitHeight())) {
 				spaceship1.hitShip();
 				if (spaceship1.isDestroyed() && (spaceship2 != null && spaceship2.isDestroyed())) {
 					soundPlayer.playExplosionSound();
+					spaceship1.moveLeft = false;
+					spaceship1.moveRight = false;
+					spaceship1.setVisible(false);
 					endGame(stage);
+				}
+				else if (spaceship1.isDestroyed()) {
+					soundPlayer.playExplosionSound();
+					spaceship1.moveLeft = false;
+					spaceship1.moveRight = false;
+					spaceship1.setVisible(false);
 				}
 				setLives();
 				spaceship1.setLayoutX(screenWidth / 2 - spaceship1.getFitWidth() / 2);
 				return true;
 			}
-			if (spaceship2 != null && bullet.withinBounds(spaceship2.getLayoutX(), spaceship2.getLayoutY(), spaceship2.getLayoutX() + spaceship2.getFitWidth(), spaceship2.getLayoutY() + spaceship2.getFitHeight())) {
+			if (spaceship2 != null && !spaceship2.isDisabled() && bullet.withinBounds(spaceship2.getLayoutX(), spaceship2.getLayoutY(), spaceship2.getLayoutX() + spaceship2.getFitWidth(), spaceship2.getLayoutY() + spaceship2.getFitHeight())) {
 				spaceship2.hitShip();
-				if (spaceship2.isDestroyed()) {
+				if (spaceship1.isDestroyed() && spaceship2.isDestroyed()) {
 					soundPlayer.playExplosionSound();
+					spaceship2.moveLeft = false;
+					spaceship2.moveRight = false;
+					spaceship2.setVisible(false);
 					endGame(stage);
+				}
+				else if (spaceship2.isDestroyed()) {
+					soundPlayer.playExplosionSound();
+					spaceship2.moveLeft = false;
+					spaceship2.moveRight = false;
+					spaceship2.setVisible(false);
 				}
 				setLives();
 				spaceship2.setLayoutX(screenWidth / 2 - spaceship2.getFitWidth() / 2);
