@@ -12,7 +12,7 @@ public class Alien extends Pane {
     protected Image explosionImage;
     private boolean isAlive = true;
 
-    public Alien(String imageUrl1, String imageUrl2, String explosionImageUrl) {
+    public Alien(String imageUrl1, String imageUrl2, String explosionImageUrl, int width) {
         this.image1 = new Image(imageUrl1);
         this.image2 = new Image(imageUrl2);
         this.explosionImage = new Image(explosionImageUrl);
@@ -21,7 +21,7 @@ public class Alien extends Pane {
         this.imageView = new ImageView(image1);
         this.usingFirstImage = true;
 
-        this.imageView.setFitWidth(50);
+        this.imageView.setFitWidth(width);
         this.imageView.setFitHeight(50);
         getChildren().add(this.imageView);
     }
