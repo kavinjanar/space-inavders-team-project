@@ -154,6 +154,10 @@ public class SpaceInvadersGUI extends Application {
 			basePane.getChildren().remove(mainMenu);
 			basePane.getChildren().add(tutorialPane);
 		});
+		tutorialPane.getBackLabel().setOnMouseClicked(event -> {
+			basePane.getChildren().remove(tutorialPane);
+			basePane.getChildren().add(mainMenu);
+		});
 		
 		// Keyboard movement
 		scene.addEventFilter(KeyEvent.KEY_PRESSED, (KeyEvent event) -> {

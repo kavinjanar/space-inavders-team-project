@@ -13,6 +13,7 @@ import javafx.scene.text.Font;
 public class TutorialPane extends BorderPane {
 	private Label prevLabel = new Label("Previous");
 	private Label nextLabel = new Label("Next");
+	private Label backLabel = new Label("< Back");
 	private Label tutorialText = new Label();
 	private ArrayList<String> tutorialTextList = new ArrayList<String>();
 	private int tutorialPageIndex;
@@ -28,6 +29,10 @@ public class TutorialPane extends BorderPane {
 	private void layoutGUI() {
 		Font spaceFont = Font.loadFont("file:fonts/space_invaders.ttf", 44);
 
+		backLabel.setFont(spaceFont);
+		backLabel.setStyle("-fx-text-fill: #00ff5a");
+		tutorialText.setFont(spaceFont);
+		tutorialText.setStyle("-fx-text-fill: #00ff5a");
 		tutorialText.setText(tutorialTextList.get(tutorialPageIndex));
 		tutorialText.setWrapText(true);
 		prevLabel.setFont(spaceFont);
@@ -39,27 +44,26 @@ public class TutorialPane extends BorderPane {
 		buttonGrid.add(prevLabel, 0, 0);
 		buttonGrid.add(nextLabel, 1, 0);
 		buttonGrid.setAlignment(Pos.CENTER);
-		buttonGrid.setHgap(10);
+		buttonGrid.setHgap(40);
 
-		BorderPane.setMargin(tutorialText, new Insets(10, 10, 0, 10));
-		GridPane.setMargin(prevLabel, new Insets(0, 0, 10, 0));
-		GridPane.setMargin(nextLabel, new Insets(0, 0, 10, 0));
+		BorderPane.setMargin(tutorialText, new Insets(20, 20, 0, 20));
+		BorderPane.setMargin(backLabel, new Insets(20, 0, 0, 20));
+		GridPane.setMargin(prevLabel, new Insets(0, 0, 20, 0));
+		GridPane.setMargin(nextLabel, new Insets(0, 0, 20, 0));
 
 		this.setStyle("-fx-background-color: black;");
-		this.setTop(tutorialText);
+		this.setTop(backLabel);
+		this.setCenter(tutorialText);
 		this.setBottom(buttonGrid);
 	}
 
-	private void updateButtonState() {
-		if (tutorialPageIndex == 0)
-			prevLabel.setDisable(true);
-		else
-			prevLabel.setDisable(false);
+	public Label getBackLabel() {
+		return backLabel;
+	}
 
-		if (tutorialPageIndex == tutorialTextList.size() - 1)
-			nextLabel.setDisable(true);
-		else
-			nextLabel.setDisable(false);
+	private void updateButtonState() {
+		prevLabel.setDisable(tutorialPageIndex == 0);
+		nextLabel.setDisable(tutorialPageIndex == tutorialTextList.size() - 1);
 	}
 
 	private void registerHandlers() {
@@ -68,11 +72,28 @@ public class TutorialPane extends BorderPane {
 			tutorialText.setText(tutorialTextList.get(tutorialPageIndex));
 			updateButtonState();
 		});
-		
+		prevLabel.setOnMouseEntered(event -> {
+			prevLabel.setStyle("-fx-text-fill: #79FFA8");
+		});
+		prevLabel.setOnMouseExited(event -> {
+			prevLabel.setStyle("-fx-text-fill: #00ff5a");
+		});
 		nextLabel.setOnMouseClicked(event -> {
 			tutorialPageIndex++;
 			tutorialText.setText(tutorialTextList.get(tutorialPageIndex));
 			updateButtonState();
+		});
+		nextLabel.setOnMouseEntered(event -> {
+			nextLabel.setStyle("-fx-text-fill: #79FFA8");
+		});
+		nextLabel.setOnMouseExited(event -> {
+			nextLabel.setStyle("-fx-text-fill: #00ff5a");
+		});
+		backLabel.setOnMouseEntered(event -> {
+			backLabel.setStyle("-fx-text-fill: #79FFA8");
+		});
+		backLabel.setOnMouseExited(event -> {
+			backLabel.setStyle("-fx-text-fill: #00ff5a");
 		});
 	}
 
