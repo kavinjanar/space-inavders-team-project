@@ -4,13 +4,13 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 public class Bullet {
-	private int speed;
-	private int startX;
-	private int startY;
+	private double speed;
+	private double startX;
+	private double startY;
 	private boolean fromEnemy;
 	private ImageView image;
 	
-	public Bullet(int x, int y, int speed, boolean fromEnemy) {
+	public Bullet(double x, double y, double speed, boolean fromEnemy) {
 		this.startX = x;
 		this.startY = y;
 		this.speed = speed;
@@ -25,11 +25,11 @@ public class Bullet {
 		image.setLayoutY(y);
 	}
 	
-	public int getStartX() { return startX; }
+	public double getStartX() { return startX; }
 	
-	public int getStartY() { return startY; }
+	public double getStartY() { return startY; }
 	
-	public int getSpeed() { return speed; }
+	public double getSpeed() { return speed; }
 	
 	public boolean isFromEnemy() { return fromEnemy; }
 	

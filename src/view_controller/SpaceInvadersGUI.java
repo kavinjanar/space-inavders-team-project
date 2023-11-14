@@ -16,6 +16,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
@@ -36,13 +37,13 @@ public class SpaceInvadersGUI extends Application {
 	private Pane pane = new Pane();
 	private TutorialPane tutorialPane = new TutorialPane();
 	private Button tutorialButton;
-	private SpaceShip spaceship;
-	private boolean moveLeft = false;
-	private boolean moveRight = false;
-	private boolean fireBullet = false;
+	private int numPlayers = 2;
+	private SpaceShip spaceship1;
+	private SpaceShip spaceship2;
+	private boolean fireBullet1 = false;
+	private boolean fireBullet2 = false;
 	private final double playerSpeed = 5;
 	private final double bulletSpeed = 12;
-	private Bullet plyrBullet;
 	private ArrayList<Bullet> enemyBullets = new ArrayList<>();
 	private ArrayList<Shield> shields = new ArrayList<>();
 	private Pane alienGridPane = new Pane();
@@ -74,7 +75,7 @@ public class SpaceInvadersGUI extends Application {
 	@Override
 	public void start(Stage stage) throws Exception {
 		pane.setStyle("-fx-background-color: black;");
-		
+				
 		// score label setup
 		Font scoreFont = Font.loadFont("file:fonts/space_invaders.ttf", 44);
 		scoreLabel.setFont(scoreFont);
@@ -98,17 +99,28 @@ public class SpaceInvadersGUI extends Application {
 		tutorialButton.setLayoutY(screenHeight * 0.95);
 		initTutorialWindow(stage);
 
-		// space ship initialization
+		// space ship initialization		
 		Image spaceshipImage = new Image("file:images/Spaceship.png");
-		spaceship = new SpaceShip(spaceshipImage);
-		System.out.println("Image loaded? " + spaceshipImage.isError());
+		spaceship1 = new SpaceShip(spaceshipImage);
 
-		spaceship.setFitWidth(50);
-		spaceship.setFitHeight(60);
-		spaceship.setPreserveRatio(true);
-		spaceship.setLayoutX(screenWidth / 2 - spaceship.getFitWidth() / 2);
-		spaceship.setLayoutY(screenHeight * 0.80);
-		
+		spaceship1.setFitWidth(50);
+		spaceship1.setFitHeight(60);
+		spaceship1.setPreserveRatio(true);
+		spaceship1.setLayoutX(screenWidth / 2 - spaceship1.getFitWidth() / 2);
+		spaceship1.setLayoutY(screenHeight * 0.80);
+		pane.getChildren().add(spaceship1);
+
+		if (numPlayers > 1) {
+			spaceship2 = new SpaceShip(spaceshipImage);
+	
+			spaceship2.setFitWidth(50);
+			spaceship2.setFitHeight(60);
+			spaceship2.setPreserveRatio(true);
+			spaceship2.setLayoutX(screenWidth / 2 - spaceship1.getFitWidth() / 2);
+			spaceship2.setLayoutY(screenHeight * 0.85);
+			pane.getChildren().add(spaceship2);
+		}
+
 		setLives();
 
 		// Add shields
@@ -125,7 +137,6 @@ public class SpaceInvadersGUI extends Application {
 			}
 		}
 
-		pane.getChildren().add(spaceship);
 		pane.getChildren().add(tutorialButton);
 		pane.getChildren().add(scoreLabel);
 		pane.getChildren().add(scoreValueLabel);
@@ -144,36 +155,64 @@ public class SpaceInvadersGUI extends Application {
 		Scene menuScene = new Scene(mainMenu, screenWidth, screenHeight);
 
 		// Keyboard movement
-		scene.setOnKeyPressed((event) -> {
+		scene.addEventFilter(KeyEvent.KEY_PRESSED, (KeyEvent event) -> {
 			switch (event.getCode()) {
 			case A:
-				moveLeft = true;
+				spaceship1.moveLeft = true;
 				break;
-
+			
 			case D:
-				moveRight = true;
+				spaceship1.moveRight = true;
 				break;
 
+			case LEFT:
+				if (spaceship2 != null)
+					spaceship2.moveLeft = true;
+				break;
+
+			case RIGHT:
+				if (spaceship2 != null)
+					spaceship2.moveRight = true;
+				break;
+				
 			case SHIFT:
-				fireBullet = true;
+				fireBullet1 = true;
+				break;
+				
+			case SPACE:
+				fireBullet2 = true;
 				break;
 
 			default:
 				break;
 			}
 		});
-		scene.setOnKeyReleased((event) -> {
+		scene.addEventFilter(KeyEvent.KEY_RELEASED, (KeyEvent event) -> {
 			switch (event.getCode()) {
 			case A:
-				moveLeft = false;
+				spaceship1.moveLeft = false;
 				break;
-
+			
 			case D:
-				moveRight = false;
+				spaceship1.moveRight = false;
+				break;
+				
+			case LEFT:
+				if (spaceship2 != null)
+					spaceship2.moveLeft = false;
 				break;
 
+			case RIGHT:
+				if (spaceship2 != null)
+					spaceship2.moveRight = false;
+				break;
+			
 			case SHIFT:
-				fireBullet = false;
+				fireBullet1 = false;
+				break;
+				
+			case SPACE:
+				fireBullet2 = false;
 				break;
 
 			default:
@@ -184,34 +223,68 @@ public class SpaceInvadersGUI extends Application {
 
 			@Override
 			public void handle(long arg0) {
-				// TODO Auto-generated method stub
-				int dx = 0;
+				// spaceship 1 stuff
+				if (spaceship1.moveLeft)
+					spaceship1.setLayoutX(spaceship1.getLayoutX() - playerSpeed);
+				if (spaceship1.moveRight)
+					spaceship1.setLayoutX(spaceship1.getLayoutX() + playerSpeed);
 
-				if (moveLeft)
-					dx -= playerSpeed;
-				if (moveRight)
-					dx += playerSpeed;
-
-				spaceship.setLayoutX(spaceship.getLayoutX() + dx);
-
+				Bullet plyrBullet = spaceship1.getBullet();
 				// Reset bullet position if out of bounds
 				if (plyrBullet != null) {
 					ImageView playerBullet = plyrBullet.getImageView();
-					if (playerBullet.getLayoutY() < -1*playerBullet.getFitHeight() && fireBullet || bulletHitSomething(plyrBullet, stage)) {
+					if (playerBullet.getLayoutY() < -1*playerBullet.getFitHeight() && fireBullet1 || bulletHitSomething(plyrBullet, stage)) {
 						pane.getChildren().remove(plyrBullet.getImageView());
-						plyrBullet = null;
+						spaceship1.deleteBullet();
 					}
 					else
 						playerBullet.setLayoutY(playerBullet.getLayoutY() + plyrBullet.getSpeed());
 				}
-				else if (fireBullet) {
-					plyrBullet = new Bullet(
-							(int)(spaceship.getLayoutX() + spaceship.getFitWidth()/2 - 5), 
-							(int)(spaceship.getLayoutY() - spaceship.getFitHeight()/2), 
-							-1*(int)bulletSpeed, 
-							false);
-					pane.getChildren().add(plyrBullet.getImageView());
+				else if (fireBullet1) {
+					spaceship1.fireBullet();
+					pane.getChildren().add(spaceship1.getBullet().getImageView());
 					soundPlayer.playShootSound();
+				}
+				
+				double x = spaceship1.getLayoutX();
+				double width = spaceship1.getBoundsInLocal().getWidth();
+
+				if (x < 0)
+					spaceship1.setLayoutX(0);
+				if (x + width > screenWidth)
+					spaceship1.setLayoutX(screenWidth - width);
+								
+				// spaceship 2 stuff
+				if (spaceship2 != null) {
+					if (spaceship2.moveLeft)
+						spaceship2.setLayoutX(spaceship2.getLayoutX() - playerSpeed);
+					if (spaceship2.moveRight)
+						spaceship2.setLayoutX(spaceship2.getLayoutX() + playerSpeed);
+	
+					plyrBullet = spaceship2.getBullet();
+					// Reset bullet position if out of bounds
+					if (plyrBullet != null) {
+						ImageView playerBullet = plyrBullet.getImageView();
+						if (playerBullet.getLayoutY() < -1*playerBullet.getFitHeight() && fireBullet2 || bulletHitSomething(plyrBullet, stage)) {
+							pane.getChildren().remove(plyrBullet.getImageView());
+							spaceship2.deleteBullet();
+						}
+						else
+							playerBullet.setLayoutY(playerBullet.getLayoutY() + plyrBullet.getSpeed());
+					}
+					else if (fireBullet2) {
+						spaceship2.fireBullet();
+						pane.getChildren().add(spaceship2.getBullet().getImageView());
+						soundPlayer.playShootSound();
+					}
+					
+					x = spaceship2.getLayoutX();
+					width = spaceship2.getBoundsInLocal().getWidth();
+	
+					if (x < 0)
+						spaceship2.setLayoutX(0);
+					if (x + width > screenWidth)
+						spaceship2.setLayoutX(screenWidth - width);
 				}
 				
 				int i = 0;
@@ -226,14 +299,6 @@ public class SpaceInvadersGUI extends Application {
 					}
 					i++;
 				}
-
-				double x = spaceship.getLayoutX();
-				double width = spaceship.getBoundsInLocal().getWidth();
-
-				if (x < 0)
-					spaceship.setLayoutX(0);
-				if (x + width > screenWidth)
-					spaceship.setLayoutX(screenWidth - width);
 			}
 		};
 		timer.start();
@@ -251,7 +316,6 @@ public class SpaceInvadersGUI extends Application {
 		randGen = new Random(System.currentTimeMillis());
 		alienGrid(stage);
 		currTimeline = moveAlienGrid(stage);
-
 	}
 	
 	private void setLives()
@@ -263,7 +327,7 @@ public class SpaceInvadersGUI extends Application {
 			pane.getChildren().remove(life);
 		}
 		livesList.clear();
-		for (int i = 0; i < spaceship.getLives(); i++)
+		for (int i = 0; i < spaceship1.getLives(); i++)
 		{
 			ImageView life = new ImageView(lifeImage);
 			life.setFitHeight(40);
@@ -288,14 +352,24 @@ public class SpaceInvadersGUI extends Application {
 			}
 		}
 		if (bullet.isFromEnemy()) {
-			if (bullet.withinBounds(spaceship.getLayoutX(), spaceship.getLayoutY(), spaceship.getLayoutX() + spaceship.getFitWidth(), spaceship.getLayoutY() + spaceship.getFitHeight())) {
-				spaceship.hitShip();
-				if (spaceship.isDestroyed()) {
+			if (bullet.withinBounds(spaceship1.getLayoutX(), spaceship1.getLayoutY(), spaceship1.getLayoutX() + spaceship1.getFitWidth(), spaceship1.getLayoutY() + spaceship1.getFitHeight())) {
+				spaceship1.hitShip();
+				if (spaceship1.isDestroyed()) {
 					soundPlayer.playExplosionSound();
 					endGame(stage);
 				}
 				setLives();
-				spaceship.setLayoutX(screenWidth / 2 - spaceship.getFitWidth() / 2);
+				spaceship1.setLayoutX(screenWidth / 2 - spaceship1.getFitWidth() / 2);
+				return true;
+			}
+			if (spaceship2 != null && bullet.withinBounds(spaceship2.getLayoutX(), spaceship2.getLayoutY(), spaceship2.getLayoutX() + spaceship2.getFitWidth(), spaceship2.getLayoutY() + spaceship2.getFitHeight())) {
+				spaceship2.hitShip();
+				if (spaceship2.isDestroyed()) {
+					soundPlayer.playExplosionSound();
+					endGame(stage);
+				}
+				setLives();
+				spaceship2.setLayoutX(screenWidth / 2 - spaceship2.getFitWidth() / 2);
 				return true;
 			}
 		}
@@ -352,11 +426,7 @@ public class SpaceInvadersGUI extends Application {
 	
 	private boolean allAliensDestroyed()
 	{
-		if (alienGridPane.getChildren().isEmpty())
-		{
-			return true;
-		}
-		return false;
+		return alienGridPane.getChildren().isEmpty();
 	}
 	
 	private void incrementScore(int increment)
@@ -373,7 +443,7 @@ public class SpaceInvadersGUI extends Application {
 		tutorialWindow.initOwner(stage);
 		tutorialWindow.initModality(Modality.WINDOW_MODAL);
 
-		tutorialButton.setOnAction(event -> {
+		tutorialButton.setOnMouseClicked(event -> {
 			tutorialWindow.setTitle("Tutorial");
 			tutorialWindow.setScene(tutorialScene);
 			tutorialWindow.setHeight(300);
@@ -452,14 +522,17 @@ public class SpaceInvadersGUI extends Application {
 	    		if (node instanceof Alien && ((Alien) node).isAlive()) {
 	                ((Alien) node).switchImage();
 	            }
-	            int num = randGen.nextInt(0, alienGridPane.getChildren().size());
-	            if (num == 0) {
+	        }
+	    	for (int i = 0; i < 4; i++) {
+	        	int num = randGen.nextInt(0, 200);
+	        	if (num < alienGridPane.getChildren().size()) {
+	        		Alien node = (Alien) alienGridPane.getChildren().get(num);
 	            	int x = (int)(node.getLayoutBounds().getCenterX() + node.getLayoutX() + alienGridPane.getLayoutX());
 	            	int y = (int)(node.getLayoutBounds().getCenterY() + node.getLayoutY() + alienGridPane.getLayoutY());
 	            	Bullet bullet = new Bullet(x, y, (int)bulletSpeed, true);
 	            	enemyBullets.add(bullet);
 	            	pane.getChildren().add(bullet.getImageView());
-	            }
+	        	}
 	        }
 	    	
 	        if (moveAliensRight) {
@@ -497,6 +570,7 @@ public class SpaceInvadersGUI extends Application {
 		Button closeButton = new Button("Close");
 		closeButton.setOnAction((event) -> {
 			gameOverStage.close();
+			stage.close();
 		});
 		retryButton.setOnAction((event) -> {
 			
@@ -516,7 +590,7 @@ public class SpaceInvadersGUI extends Application {
 	
 	private void increaseDifficulty(Stage stage)
 	{
-		pauseDuration = pauseDuration / 3;
+		pauseDuration = pauseDuration * 0.7;
 		currTimeline.stop();
 		currTimeline.getKeyFrames().clear();
 		KeyFrame newKeyFrame = new KeyFrame(Duration.seconds(pauseDuration), e -> {
@@ -525,14 +599,6 @@ public class SpaceInvadersGUI extends Application {
 	        for (Node node : alienGridPane.getChildren()) {
 	            if (node instanceof Alien) {
 	                ((Alien) node).switchImage();
-	            }
-	            int num = randGen.nextInt(0, alienGridPane.getChildren().size());
-	            if (num == 0) {
-	            	int x = (int)(node.getLayoutBounds().getCenterX() + node.getLayoutX() + alienGridPane.getLayoutX());
-	            	int y = (int)(node.getLayoutBounds().getCenterY() + node.getLayoutY() + alienGridPane.getLayoutY());
-	            	Bullet bullet = new Bullet(x, y, (int)bulletSpeed, true);
-	            	enemyBullets.add(bullet);
-	            	pane.getChildren().add(bullet.getImageView());
 	            }
 	        }
 
@@ -549,6 +615,21 @@ public class SpaceInvadersGUI extends Application {
 	        }
 	    });
 		currTimeline.getKeyFrames().add(newKeyFrame);
+		
+		KeyFrame bulletKeyFrame = new KeyFrame(Duration.millis(500), e -> {
+			for (int i = 0; i < 4; i++) {
+	        	int num = randGen.nextInt(0, 200);
+	        	if (num < alienGridPane.getChildren().size()) {
+	        		Alien node = (Alien) alienGridPane.getChildren().get(num);
+	            	int x = (int)(node.getLayoutBounds().getCenterX() + node.getLayoutX() + alienGridPane.getLayoutX());
+	            	int y = (int)(node.getLayoutBounds().getCenterY() + node.getLayoutY() + alienGridPane.getLayoutY());
+	            	Bullet bullet = new Bullet(x, y, (int)bulletSpeed, true);
+	            	enemyBullets.add(bullet);
+	            	pane.getChildren().add(bullet.getImageView());
+	        	}
+	        }
+		});
+		currTimeline.getKeyFrames().add(bulletKeyFrame);
 		currTimeline.play();
 		
 	}
