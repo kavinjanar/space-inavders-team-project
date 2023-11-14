@@ -10,7 +10,6 @@ import javafx.application.Application;
 import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -40,6 +39,8 @@ public class SpaceInvadersGUI extends Application {
 	private StackPane basePane = new StackPane();
 	private TutorialPane tutorialPane = new TutorialPane();
 	private OptionsPane optionsPane = new OptionsPane();
+	private GameOverPane gameOverPane = new GameOverPane();
+	private PlayerSelectionPane playerSelectionPane = new PlayerSelectionPane();
 	private int numPlayers = 2;
 	private SpaceShip spaceship1;
 	private SpaceShip spaceship2;
@@ -54,7 +55,7 @@ public class SpaceInvadersGUI extends Application {
 	private final double alienMoveDistance = 20;
 	private Alien[][] aliens;
 	private Random randGen;
-	private  double pauseDuration = 1;
+	private double pauseDuration = 1;
 	private Timeline currTimeline;
 	private SoundPlayer soundPlayer;
 	private Label scoreLabel = new Label("Score");
@@ -64,12 +65,12 @@ public class SpaceInvadersGUI extends Application {
 	private int score;
 	private AnimationTimer timer;
 	private MainMenuPane mainMenu;
-	
+
 	// screen dimensions
 	private Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
 	private double screenWidth = screenBounds.getWidth();
 	private double screenHeight = screenBounds.getHeight();
-	
+
 	public static void main(String[] args) {
 		launch(args);
 	}
@@ -78,25 +79,25 @@ public class SpaceInvadersGUI extends Application {
 	public void start(Stage stage) throws Exception {
 		pane.setStyle("-fx-background-color: black;");
 		basePane.setStyle("-fx-background-color: black;");
-				
+
 		// score label setup
 		Font scoreFont = Font.loadFont("file:fonts/space_invaders.ttf", 44);
 		scoreLabel.setFont(scoreFont);
 		scoreLabel.setStyle("-fx-text-fill: #FFFFFF");
 		scoreLabel.setLayoutX(50);
 		scoreLabel.setLayoutY(20);
-		
+
 		scoreValueLabel.setFont(scoreFont);
 		scoreValueLabel.setStyle("-fx-text-fill: #00ff5a");
 		scoreValueLabel.setLayoutX(240);
 		scoreValueLabel.setLayoutY(20);
-		
+
 		livesLabel.setFont(scoreFont);
 		livesLabel.setStyle("-fx-text-fill: #FFFFFF");
 		livesLabel.setLayoutX(screenWidth - 370);
 		livesLabel.setLayoutY(20);
 
-		// space ship initialization		
+		// space ship initialization
 		Image spaceshipImage = new Image("file:images/Spaceship.png");
 		spaceship1 = new SpaceShip(spaceshipImage);
 
@@ -109,7 +110,7 @@ public class SpaceInvadersGUI extends Application {
 
 		if (numPlayers > 1) {
 			spaceship2 = new SpaceShip(spaceshipImage);
-	
+
 			spaceship2.setFitWidth(50);
 			spaceship2.setFitHeight(60);
 			spaceship2.setPreserveRatio(true);
@@ -138,36 +139,11 @@ public class SpaceInvadersGUI extends Application {
 		pane.getChildren().add(scoreValueLabel);
 		pane.getChildren().add(livesLabel);
 		
-		Parent parent = basePane;
+		Scene scene = new Scene(basePane, screenWidth, screenHeight);
 		
-		Scene scene = new Scene(parent, screenWidth, screenHeight);
-
-		mainMenu = new MainMenuPane();
 		ColumnConstraints col1Constraints = new ColumnConstraints();
 		col1Constraints.setPercentWidth(100);
-		
-		basePane.getChildren().add(mainMenu);
-		mainMenu.getStartGameLabel().setOnMouseClicked(event -> {
-			basePane.getChildren().remove(mainMenu);
-			basePane.getChildren().add(pane);
-		});
-		mainMenu.getTutorialLabel().setOnMouseClicked(event -> {
-			basePane.getChildren().remove(mainMenu);
-			basePane.getChildren().add(tutorialPane);
-		});
-		mainMenu.getOptionsLabel().setOnMouseClicked(event -> {
-			basePane.getChildren().remove(mainMenu);
-			basePane.getChildren().add(optionsPane);
-		});
-		tutorialPane.getBackLabel().setOnMouseClicked(event -> {
-			basePane.getChildren().remove(tutorialPane);
-			basePane.getChildren().add(mainMenu);
-		});
-		optionsPane.getBackLabel().setOnMouseClicked(event -> {
-			basePane.getChildren().remove(optionsPane);
-			basePane.getChildren().add(mainMenu);
-		});
-		
+
 		// Keyboard movement
 		scene.addEventFilter(KeyEvent.KEY_PRESSED, (KeyEvent event) -> {
 			if (!spaceship1.isDestroyed()) {
@@ -175,15 +151,15 @@ public class SpaceInvadersGUI extends Application {
 				case A:
 					spaceship1.moveLeft = true;
 					break;
-				
+
 				case D:
 					spaceship1.moveRight = true;
 					break;
-					
+
 				case SHIFT:
 					fireBullet1 = true;
 					break;
-				
+
 				default:
 					break;
 				}
@@ -197,7 +173,7 @@ public class SpaceInvadersGUI extends Application {
 				case RIGHT:
 					spaceship2.moveRight = true;
 					break;
-					
+
 				case SPACE:
 					fireBullet2 = true;
 					break;
@@ -213,15 +189,15 @@ public class SpaceInvadersGUI extends Application {
 				case A:
 					spaceship1.moveLeft = false;
 					break;
-				
+
 				case D:
 					spaceship1.moveRight = false;
 					break;
-					
+
 				case SHIFT:
 					fireBullet1 = false;
 					break;
-				
+
 				default:
 					break;
 				}
@@ -235,7 +211,7 @@ public class SpaceInvadersGUI extends Application {
 				case RIGHT:
 					spaceship2.moveRight = false;
 					break;
-					
+
 				case SPACE:
 					fireBullet2 = false;
 					break;
@@ -259,19 +235,18 @@ public class SpaceInvadersGUI extends Application {
 				// Reset bullet position if out of bounds
 				if (plyrBullet != null) {
 					ImageView playerBullet = plyrBullet.getImageView();
-					if (playerBullet.getLayoutY() < -1*playerBullet.getFitHeight() && fireBullet1 || bulletHitSomething(plyrBullet, stage)) {
+					if (playerBullet.getLayoutY() < -1 * playerBullet.getFitHeight() && fireBullet1
+							|| bulletHitSomething(plyrBullet, stage)) {
 						pane.getChildren().remove(plyrBullet.getImageView());
 						spaceship1.deleteBullet();
-					}
-					else
+					} else
 						playerBullet.setLayoutY(playerBullet.getLayoutY() + plyrBullet.getSpeed());
-				}
-				else if (fireBullet1) {
+				} else if (fireBullet1) {
 					spaceship1.fireBullet();
 					pane.getChildren().add(spaceship1.getBullet().getImageView());
 					soundPlayer.playShootSound();
 				}
-				
+
 				double x = spaceship1.getLayoutX();
 				double width = spaceship1.getBoundsInLocal().getWidth();
 
@@ -279,48 +254,46 @@ public class SpaceInvadersGUI extends Application {
 					spaceship1.setLayoutX(0);
 				if (x + width > screenWidth)
 					spaceship1.setLayoutX(screenWidth - width);
-								
+
 				// spaceship 2 stuff
 				if (spaceship2 != null) {
 					if (spaceship2.moveLeft)
 						spaceship2.setLayoutX(spaceship2.getLayoutX() - playerSpeed);
 					if (spaceship2.moveRight)
 						spaceship2.setLayoutX(spaceship2.getLayoutX() + playerSpeed);
-	
+
 					plyrBullet = spaceship2.getBullet();
 					// Reset bullet position if out of bounds
 					if (plyrBullet != null) {
 						ImageView playerBullet = plyrBullet.getImageView();
-						if (playerBullet.getLayoutY() < -1*playerBullet.getFitHeight() && fireBullet2 || bulletHitSomething(plyrBullet, stage)) {
+						if (playerBullet.getLayoutY() < -1 * playerBullet.getFitHeight() && fireBullet2
+								|| bulletHitSomething(plyrBullet, stage)) {
 							pane.getChildren().remove(plyrBullet.getImageView());
 							spaceship2.deleteBullet();
-						}
-						else
+						} else
 							playerBullet.setLayoutY(playerBullet.getLayoutY() + plyrBullet.getSpeed());
-					}
-					else if (fireBullet2) {
+					} else if (fireBullet2) {
 						spaceship2.fireBullet();
 						pane.getChildren().add(spaceship2.getBullet().getImageView());
 						soundPlayer.playShootSound();
 					}
-					
+
 					x = spaceship2.getLayoutX();
 					width = spaceship2.getBoundsInLocal().getWidth();
-	
+
 					if (x < 0)
 						spaceship2.setLayoutX(0);
 					if (x + width > screenWidth)
 						spaceship2.setLayoutX(screenWidth - width);
 				}
-				
+
 				int i = 0;
 				while (i < enemyBullets.size()) {
 					Bullet bullet = enemyBullets.get(i);
 					if (bulletHitSomething(bullet, stage)) {
 						pane.getChildren().remove(bullet.getImageView());
 						enemyBullets.remove(bullet);
-					}
-					else {
+					} else {
 						bullet.getImageView().setLayoutY(bullet.getImageView().getLayoutY() + bullet.getSpeed());
 					}
 					i++;
@@ -334,7 +307,7 @@ public class SpaceInvadersGUI extends Application {
 		stage.setScene(scene);
 		stage.show();
 		stage.requestFocus();
-		
+
 		soundPlayer = new SoundPlayer();
 		soundPlayer.playThemeSongLoop();
 
@@ -342,19 +315,73 @@ public class SpaceInvadersGUI extends Application {
 		randGen = new Random(System.currentTimeMillis());
 		alienGrid(stage);
 		currTimeline = moveAlienGrid(stage);
+		
+		registerMenuHandlers(stage);
 	}
 	
-	private void setLives()
-	{
+	private void registerMenuHandlers(Stage stage) {
+		mainMenu = new MainMenuPane();
+		basePane.getChildren().add(mainMenu);
+		mainMenu.getStartGameLabel().setOnMouseClicked(event -> {
+			basePane.getChildren().remove(mainMenu);
+			basePane.getChildren().add(playerSelectionPane);
+		});
+		mainMenu.getTutorialLabel().setOnMouseClicked(event -> {
+			basePane.getChildren().remove(mainMenu);
+			basePane.getChildren().add(tutorialPane);
+		});
+		mainMenu.getOptionsLabel().setOnMouseClicked(event -> {
+			basePane.getChildren().remove(mainMenu);
+			basePane.getChildren().add(optionsPane);
+		});
+		mainMenu.getQuitLabel().setOnMouseClicked(event -> {
+			stage.close();
+		});
+		playerSelectionPane.getSinglePlayerLabel().setOnMouseClicked(event -> {
+			basePane.getChildren().remove(playerSelectionPane);
+			basePane.getChildren().add(pane);
+			// TODO start game in singleplayer
+		});
+		playerSelectionPane.getMultiplayerLabel().setOnMouseClicked(event -> {
+			basePane.getChildren().remove(playerSelectionPane);
+			basePane.getChildren().add(pane);
+			// TODO start game in multiplayer
+		});
+		playerSelectionPane.getBackLabel().setOnMouseClicked(event -> {
+			basePane.getChildren().remove(playerSelectionPane);
+			basePane.getChildren().add(mainMenu);
+		});
+		tutorialPane.getBackLabel().setOnMouseClicked(event -> {
+			basePane.getChildren().remove(tutorialPane);
+			basePane.getChildren().add(mainMenu);
+		});
+		optionsPane.getBackLabel().setOnMouseClicked(event -> {
+			basePane.getChildren().remove(optionsPane);
+			basePane.getChildren().add(mainMenu);
+		});
+		gameOverPane.getRestartLabel().setOnMouseClicked(event -> {
+			// TODO reset game
+			 basePane.getChildren().remove(gameOverPane);
+			 basePane.getChildren().add(pane);
+		});
+		gameOverPane.getMainMenuLabel().setOnMouseClicked(event -> {
+			basePane.getChildren().remove(gameOverPane);
+			basePane.getChildren().add(mainMenu);
+			// TODO reset game
+		});
+		gameOverPane.getQuitLabel().setOnMouseClicked(event -> {
+			stage.close();
+		});
+	}
+
+	private void setLives() {
 		Image lifeImage = new Image("file:images/Life.png");
-		
-		for (ImageView life : livesList)
-		{
+
+		for (ImageView life : livesList) {
 			pane.getChildren().remove(life);
 		}
 		livesList.clear();
-		for (int i = 0; i < spaceship1.getLives(); i++)
-		{
+		for (int i = 0; i < spaceship1.getLives(); i++) {
 			ImageView life = new ImageView(lifeImage);
 			life.setFitHeight(40);
 			life.setFitWidth(40);
@@ -364,7 +391,7 @@ public class SpaceInvadersGUI extends Application {
 			livesList.add(life);
 		}
 	}
-		
+
 	private boolean bulletHitSomething(Bullet bullet, Stage stage) {
 		for (Shield shield : shields) {
 			double shieldX = shield.getLayoutX();
@@ -372,13 +399,15 @@ public class SpaceInvadersGUI extends Application {
 			double shieldWidth = shield.getFitWidth();
 			double shieldHeight = shield.getFitHeight();
 			if (bullet.withinBounds(shieldX, shieldY, shieldX + shieldWidth, shieldY + shieldHeight)
-			&& shield.getHealth() > 0) {
+					&& shield.getHealth() > 0) {
 				shield.hit();
 				return true;
 			}
 		}
 		if (bullet.isFromEnemy()) {
-			if (!spaceship1.isDisabled() && bullet.withinBounds(spaceship1.getLayoutX(), spaceship1.getLayoutY(), spaceship1.getLayoutX() + spaceship1.getFitWidth(), spaceship1.getLayoutY() + spaceship1.getFitHeight())) {
+			if (!spaceship1.isDisabled() && bullet.withinBounds(spaceship1.getLayoutX(), spaceship1.getLayoutY(),
+					spaceship1.getLayoutX() + spaceship1.getFitWidth(),
+					spaceship1.getLayoutY() + spaceship1.getFitHeight())) {
 				spaceship1.hitShip();
 				if (spaceship1.isDestroyed() && (spaceship2 != null && spaceship2.isDestroyed())) {
 					soundPlayer.playExplosionSound();
@@ -386,8 +415,7 @@ public class SpaceInvadersGUI extends Application {
 					spaceship1.moveRight = false;
 					spaceship1.setVisible(false);
 					endGame(stage);
-				}
-				else if (spaceship1.isDestroyed()) {
+				} else if (spaceship1.isDestroyed()) {
 					soundPlayer.playExplosionSound();
 					spaceship1.moveLeft = false;
 					spaceship1.moveRight = false;
@@ -397,7 +425,10 @@ public class SpaceInvadersGUI extends Application {
 				spaceship1.setLayoutX(screenWidth / 2 - spaceship1.getFitWidth() / 2);
 				return true;
 			}
-			if (spaceship2 != null && !spaceship2.isDisabled() && bullet.withinBounds(spaceship2.getLayoutX(), spaceship2.getLayoutY(), spaceship2.getLayoutX() + spaceship2.getFitWidth(), spaceship2.getLayoutY() + spaceship2.getFitHeight())) {
+			if (spaceship2 != null && !spaceship2.isDisabled()
+					&& bullet.withinBounds(spaceship2.getLayoutX(), spaceship2.getLayoutY(),
+							spaceship2.getLayoutX() + spaceship2.getFitWidth(),
+							spaceship2.getLayoutY() + spaceship2.getFitHeight())) {
 				spaceship2.hitShip();
 				if (spaceship1.isDestroyed() && spaceship2.isDestroyed()) {
 					soundPlayer.playExplosionSound();
@@ -405,8 +436,7 @@ public class SpaceInvadersGUI extends Application {
 					spaceship2.moveRight = false;
 					spaceship2.setVisible(false);
 					endGame(stage);
-				}
-				else if (spaceship2.isDestroyed()) {
+				} else if (spaceship2.isDestroyed()) {
 					soundPlayer.playExplosionSound();
 					spaceship2.moveLeft = false;
 					spaceship2.moveRight = false;
@@ -416,65 +446,63 @@ public class SpaceInvadersGUI extends Application {
 				spaceship2.setLayoutX(screenWidth / 2 - spaceship2.getFitWidth() / 2);
 				return true;
 			}
+		} else {
+			for (int i = 0; i < aliens.length; i++) {
+				for (int j = 0; j < aliens[i].length; j++) {
+					if (aliens[i][j] != null && aliens[i][j].isAlive()) {
+						double alienX = alienGridPane.getLayoutX() + aliens[i][j].getLayoutX();
+						double alienY = alienGridPane.getLayoutY() + aliens[i][j].getLayoutY();
+						double alienSize = 50.0;
+						if (bullet.withinBounds(alienX, alienY, alienX + alienSize, alienY + alienSize)) {
+							System.out.println("Alien hit: " + alienX + " " + alienY);
+							if (aliens[i][j].isAlive()) {
+								aliens[i][j].explode(); // Change the alien to an explosion image and mark it as not
+														// alive
+								soundPlayer.playExplosionSound(); // Play explosion sound
+
+								if (i == 0) {
+									incrementScore(30);
+								} else if (i == 1 || i == 2) {
+									incrementScore(20);
+								} else {
+									incrementScore(10);
+								}
+
+								final int finalI = i;
+								final int finalJ = j;
+
+								Timeline explosionTimeline = new Timeline(new KeyFrame(Duration.millis(500), // Duration
+																												// for
+																												// explosion
+																												// to
+																												// show
+										ae -> {
+											alienGridPane.getChildren().remove(aliens[finalI][finalJ]);
+											aliens[finalI][finalJ] = null;
+											if (allAliensDestroyed()) {
+												System.out.println("Increasing difficulty");
+												increaseDifficulty(stage);
+											}
+										}));
+								explosionTimeline.setCycleCount(1);
+								explosionTimeline.play();
+
+								return true;
+							}
+						}
+					}
+				}
+			}
 		}
-		else {
-	        for (int i = 0; i < aliens.length; i++) {
-	            for (int j = 0; j < aliens[i].length; j++) {
-	            	if (aliens[i][j] != null && aliens[i][j].isAlive()) {
-	                    double alienX = alienGridPane.getLayoutX() + aliens[i][j].getLayoutX();
-	                    double alienY = alienGridPane.getLayoutY() + aliens[i][j].getLayoutY();
-	                    double alienSize = 50.0;
-	                    if (bullet.withinBounds(alienX, alienY, alienX + alienSize, alienY + alienSize)) {
-	                        System.out.println("Alien hit: " + alienX + " " + alienY);
-	                        if (aliens[i][j].isAlive()) {
-	                            aliens[i][j].explode(); // Change the alien to an explosion image and mark it as not alive
-	                            soundPlayer.playExplosionSound(); // Play explosion sound
-	                            
-	                            if (i == 0)
-	                            {
-	                            	incrementScore(30);
-	                            }else if (i == 1 || i == 2)
-	                            {
-	                            	incrementScore(20);
-	                            }else{
-	                            	incrementScore(10);
-	                            }
 
-	                            final int finalI = i;
-	                            final int finalJ = j;
-	                            
-	                            Timeline explosionTimeline = new Timeline(new KeyFrame(
-	                                Duration.millis(500), // Duration for explosion to show
-	                                ae -> {
-	                                    alienGridPane.getChildren().remove(aliens[finalI][finalJ]);
-	                                    aliens[finalI][finalJ] = null;
-	                                    if (allAliensDestroyed()) {
-	                                        System.out.println("Increasing difficulty");
-	                                        increaseDifficulty(stage);
-	                                    }
-	                                }
-	                            ));
-	                            explosionTimeline.setCycleCount(1);
-	                            explosionTimeline.play();
-
-	                            return true; 
-	                        }
-	                    }
-	                }
-	            }
-	        }
-	    }
-		
 		return false;
 	}
-	
-	private boolean allAliensDestroyed()
-	{
+
+	private boolean allAliensDestroyed() {
 		return alienGridPane.getChildren().isEmpty();
 	}
-	
-	private void incrementScore(int increment)
-	{
+
+	private void incrementScore(int increment) {
 		score += increment;
 		scoreValueLabel.setText("" + score);
 	}
@@ -485,26 +513,26 @@ public class SpaceInvadersGUI extends Application {
 	 * @param stage
 	 */
 	private void alienGrid(Stage stage) {
-	    int rows = 5;
-	    int cols = 11;
-	    
-	    double alienWidth = 90; // Width of an individual alien (including spacing)
-	    double alienHeight = 65; // Height of an individual alien (including spacing)
-	    
-	    // total width and height of the alien grid
-	    double gridWidth = alienWidth * cols;
-	    double gridHeight = alienHeight * rows;
-	    
-	    // starting x and y coordinates for the grid
-	    double startX = (stage.getWidth() - gridWidth) / 2;
-	    double startY = (stage.getHeight() - gridHeight) / 5;
-	    
-	    aliens = new Alien[rows][cols];
-	    
-	    // Reset and set up the alien grid pane
-	    alienGridPane.getChildren().clear();
-	    alienGridPane.setLayoutX(startX);
-	    alienGridPane.setLayoutY(startY);
+		int rows = 5;
+		int cols = 11;
+
+		double alienWidth = 90; // Width of an individual alien (including spacing)
+		double alienHeight = 65; // Height of an individual alien (including spacing)
+
+		// total width and height of the alien grid
+		double gridWidth = alienWidth * cols;
+		double gridHeight = alienHeight * rows;
+
+		// starting x and y coordinates for the grid
+		double startX = (stage.getWidth() - gridWidth) / 2;
+		double startY = (stage.getHeight() - gridHeight) / 5;
+
+		aliens = new Alien[rows][cols];
+
+		// Reset and set up the alien grid pane
+		alienGridPane.getChildren().clear();
+		alienGridPane.setLayoutX(startX);
+		alienGridPane.setLayoutY(startY);
 
 		for (int i = 0; i < rows; i++) {
 			for (int j = 0; j < cols; j++) {
@@ -538,55 +566,56 @@ public class SpaceInvadersGUI extends Application {
 	 */
 	private Timeline moveAlienGrid(Stage stage) {
 		final double alienDropDownDistance = 20;
-		
-	    Timeline moveAliensTimeline = new Timeline(new KeyFrame(Duration.seconds(pauseDuration), e -> {
-	    	if (alienGridPane.getChildren().size() == 0)
-	    		alienGrid(stage);
-	    	for (Node node : alienGridPane.getChildren()) {
-	    		if (node instanceof Alien && ((Alien) node).isAlive()) {
-	                ((Alien) node).switchImage();
-	            }
-	        }
-	    	for (int i = 0; i < 4; i++) {
-	        	int num = randGen.nextInt(0, 200);
-	        	if (num < alienGridPane.getChildren().size()) {
-	        		Alien node = (Alien) alienGridPane.getChildren().get(num);
-	            	int x = (int)(node.getLayoutBounds().getCenterX() + node.getLayoutX() + alienGridPane.getLayoutX());
-	            	int y = (int)(node.getLayoutBounds().getCenterY() + node.getLayoutY() + alienGridPane.getLayoutY());
-	            	Bullet bullet = new Bullet(x, y, (int)bulletSpeed, true);
-	            	enemyBullets.add(bullet);
-	            	pane.getChildren().add(bullet.getImageView());
-	        	}
-	        }
-	    	
-	        if (moveAliensRight) {
-	            alienGridPane.setLayoutX(alienGridPane.getLayoutX() + alienMoveDistance);
-	            if (alienGridPane.getLayoutX() + alienGridPane.getWidth() >= (stage.getWidth() - 50)) {
-	                moveAliensRight = false;
-	                alienGridPane.setLayoutY(alienGridPane.getLayoutY() + alienDropDownDistance);
-	            }
-	        } else {
-	            alienGridPane.setLayoutX(alienGridPane.getLayoutX() - alienMoveDistance);
-	            if (alienGridPane.getLayoutX() <= 50) {
-	                moveAliensRight = true;
-	                alienGridPane.setLayoutY(alienGridPane.getLayoutY() + alienDropDownDistance);
-	            }
-	        }
-	    }));
+
+		Timeline moveAliensTimeline = new Timeline(new KeyFrame(Duration.seconds(pauseDuration), e -> {
+			if (alienGridPane.getChildren().size() == 0)
+				alienGrid(stage);
+			for (Node node : alienGridPane.getChildren()) {
+				if (node instanceof Alien && ((Alien) node).isAlive()) {
+					((Alien) node).switchImage();
+				}
+			}
+			for (int i = 0; i < 4; i++) {
+				int num = randGen.nextInt(0, 200);
+				if (num < alienGridPane.getChildren().size()) {
+					Alien node = (Alien) alienGridPane.getChildren().get(num);
+					int x = (int) (node.getLayoutBounds().getCenterX() + node.getLayoutX()
+							+ alienGridPane.getLayoutX());
+					int y = (int) (node.getLayoutBounds().getCenterY() + node.getLayoutY()
+							+ alienGridPane.getLayoutY());
+					Bullet bullet = new Bullet(x, y, (int) bulletSpeed, true);
+					enemyBullets.add(bullet);
+					pane.getChildren().add(bullet.getImageView());
+				}
+			}
+
+			if (moveAliensRight) {
+				alienGridPane.setLayoutX(alienGridPane.getLayoutX() + alienMoveDistance);
+				if (alienGridPane.getLayoutX() + alienGridPane.getWidth() >= (stage.getWidth() - 50)) {
+					moveAliensRight = false;
+					alienGridPane.setLayoutY(alienGridPane.getLayoutY() + alienDropDownDistance);
+				}
+			} else {
+				alienGridPane.setLayoutX(alienGridPane.getLayoutX() - alienMoveDistance);
+				if (alienGridPane.getLayoutX() <= 50) {
+					moveAliensRight = true;
+					alienGridPane.setLayoutY(alienGridPane.getLayoutY() + alienDropDownDistance);
+				}
+			}
+		}));
 
 		moveAliensTimeline.setCycleCount(Timeline.INDEFINITE);
 		moveAliensTimeline.play();
 		return moveAliensTimeline;
 	}
-	
-	private void endGame(Stage stage)
-	{
+
+	private void endGame(Stage stage) {
 		timer.stop();
 		currTimeline.stop();
-		
+
 		Stage gameOverStage = new Stage();
 		gameOverStage.initModality(Modality.WINDOW_MODAL);
-		
+
 		VBox vBox = new VBox(10);
 		vBox.setAlignment(Pos.CENTER);
 		Label gameOverLabel = new Label("Game Over!");
@@ -597,10 +626,10 @@ public class SpaceInvadersGUI extends Application {
 			stage.close();
 		});
 		retryButton.setOnAction((event) -> {
-			
+
 		});
 		vBox.getChildren().addAll(gameOverLabel, closeButton);
-		
+
 		Scene gameOverScene = new Scene(vBox, 300, 200);
 		gameOverStage.setTitle("Game Over");
 		gameOverStage.setScene(gameOverScene);
@@ -611,51 +640,52 @@ public class SpaceInvadersGUI extends Application {
 		gameOverStage.requestFocus();
 
 	}
-	
-	private void increaseDifficulty(Stage stage)
-	{
+
+	private void increaseDifficulty(Stage stage) {
 		pauseDuration = pauseDuration * 0.7;
 		currTimeline.stop();
 		currTimeline.getKeyFrames().clear();
 		KeyFrame newKeyFrame = new KeyFrame(Duration.seconds(pauseDuration), e -> {
-	    	if (alienGridPane.getChildren().size() == 0)
-	    		alienGrid(stage);
-	        for (Node node : alienGridPane.getChildren()) {
-	            if (node instanceof Alien) {
-	                ((Alien) node).switchImage();
-	            }
-	        }
+			if (alienGridPane.getChildren().size() == 0)
+				alienGrid(stage);
+			for (Node node : alienGridPane.getChildren()) {
+				if (node instanceof Alien) {
+					((Alien) node).switchImage();
+				}
+			}
 
-	        if (moveAliensRight) {
-	            alienGridPane.setLayoutX(alienGridPane.getLayoutX() + alienMoveDistance);
-	            if (alienGridPane.getLayoutX() + alienGridPane.getWidth() >= (stage.getWidth() - 50)) {
-	                moveAliensRight = false;
-	            }
-	        } else {
-	            alienGridPane.setLayoutX(alienGridPane.getLayoutX() - alienMoveDistance);
-	            if (alienGridPane.getLayoutX() <= 50) {
-	                moveAliensRight = true;
-	            }
-	        }
-	    });
+			if (moveAliensRight) {
+				alienGridPane.setLayoutX(alienGridPane.getLayoutX() + alienMoveDistance);
+				if (alienGridPane.getLayoutX() + alienGridPane.getWidth() >= (stage.getWidth() - 50)) {
+					moveAliensRight = false;
+				}
+			} else {
+				alienGridPane.setLayoutX(alienGridPane.getLayoutX() - alienMoveDistance);
+				if (alienGridPane.getLayoutX() <= 50) {
+					moveAliensRight = true;
+				}
+			}
+		});
 		currTimeline.getKeyFrames().add(newKeyFrame);
-		
+
 		KeyFrame bulletKeyFrame = new KeyFrame(Duration.millis(500), e -> {
 			for (int i = 0; i < 4; i++) {
-	        	int num = randGen.nextInt(0, 200);
-	        	if (num < alienGridPane.getChildren().size()) {
-	        		Alien node = (Alien) alienGridPane.getChildren().get(num);
-	            	int x = (int)(node.getLayoutBounds().getCenterX() + node.getLayoutX() + alienGridPane.getLayoutX());
-	            	int y = (int)(node.getLayoutBounds().getCenterY() + node.getLayoutY() + alienGridPane.getLayoutY());
-	            	Bullet bullet = new Bullet(x, y, (int)bulletSpeed, true);
-	            	enemyBullets.add(bullet);
-	            	pane.getChildren().add(bullet.getImageView());
-	        	}
-	        }
+				int num = randGen.nextInt(0, 200);
+				if (num < alienGridPane.getChildren().size()) {
+					Alien node = (Alien) alienGridPane.getChildren().get(num);
+					int x = (int) (node.getLayoutBounds().getCenterX() + node.getLayoutX()
+							+ alienGridPane.getLayoutX());
+					int y = (int) (node.getLayoutBounds().getCenterY() + node.getLayoutY()
+							+ alienGridPane.getLayoutY());
+					Bullet bullet = new Bullet(x, y, (int) bulletSpeed, true);
+					enemyBullets.add(bullet);
+					pane.getChildren().add(bullet.getImageView());
+				}
+			}
 		});
 		currTimeline.getKeyFrames().add(bulletKeyFrame);
 		currTimeline.play();
-		
+
 	}
 
 }
