@@ -16,9 +16,10 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Modality;
@@ -36,7 +37,7 @@ import model.SpaceShip;
 
 public class SpaceInvadersGUI extends Application {
 	private Pane pane = new Pane();
-	private Pane basePane = new Pane();
+	private StackPane basePane = new StackPane();
 	private TutorialPane tutorialPane = new TutorialPane();
 	private Button tutorialButton;
 	private int numPlayers = 2;
@@ -62,7 +63,6 @@ public class SpaceInvadersGUI extends Application {
 	private ArrayList<ImageView> livesList = new ArrayList<ImageView>();
 	private int score;
 	private AnimationTimer timer;
-	
 	private MainMenuPane mainMenu;
 	
 	// screen dimensions
@@ -150,11 +150,17 @@ public class SpaceInvadersGUI extends Application {
 		Scene scene = new Scene(parent, screenWidth, screenHeight);
 
 		mainMenu = new MainMenuPane();
+		ColumnConstraints col1Constraints = new ColumnConstraints();
+		col1Constraints.setPercentWidth(100);
+		
 		basePane.getChildren().add(mainMenu);
-		mainMenu.setOnMousePressed(event -> {
+		mainMenu.getStartGameLabel().setOnMouseClicked(event -> {
 			basePane.getChildren().remove(mainMenu);
 			basePane.getChildren().add(pane);
 			stage.setFullScreen(true);
+		});
+		mainMenu.getTutorialLabel().setOnMouseClicked(event -> {
+			// TODO for tutorial pane
 		});
 		
 		// Keyboard movement
