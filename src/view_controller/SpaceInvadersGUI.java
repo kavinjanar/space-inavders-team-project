@@ -157,10 +157,10 @@ public class SpaceInvadersGUI extends Application {
 		mainMenu.getStartGameLabel().setOnMouseClicked(event -> {
 			basePane.getChildren().remove(mainMenu);
 			basePane.getChildren().add(pane);
-			stage.setFullScreen(true);
 		});
 		mainMenu.getTutorialLabel().setOnMouseClicked(event -> {
-			// TODO for tutorial pane
+			basePane.getChildren().remove(mainMenu);
+			basePane.getChildren().add(tutorialPane);
 		});
 		
 		// Keyboard movement

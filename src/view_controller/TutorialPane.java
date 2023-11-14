@@ -8,10 +8,11 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.text.Font;
 
 public class TutorialPane extends BorderPane {
-	private Button prevButton;
-	private Button nextButton;
+	private Label prevLabel = new Label("Previous");
+	private Label nextLabel = new Label("Next");
 	private Label tutorialText = new Label();
 	private ArrayList<String> tutorialTextList = new ArrayList<String>();
 	private int tutorialPageIndex;
@@ -25,47 +26,51 @@ public class TutorialPane extends BorderPane {
 	}
 
 	private void layoutGUI() {
-		prevButton = new Button("Previous");
-		nextButton = new Button("Next");
+		Font spaceFont = Font.loadFont("file:fonts/space_invaders.ttf", 44);
 
 		tutorialText.setText(tutorialTextList.get(tutorialPageIndex));
 		tutorialText.setWrapText(true);
+		prevLabel.setFont(spaceFont);
+		prevLabel.setStyle("-fx-text-fill: #00ff5a");
+		nextLabel.setFont(spaceFont);
+		nextLabel.setStyle("-fx-text-fill: #00ff5a");
 
 		GridPane buttonGrid = new GridPane();
-		buttonGrid.add(prevButton, 0, 0);
-		buttonGrid.add(nextButton, 1, 0);
+		buttonGrid.add(prevLabel, 0, 0);
+		buttonGrid.add(nextLabel, 1, 0);
 		buttonGrid.setAlignment(Pos.CENTER);
 		buttonGrid.setHgap(10);
 
 		BorderPane.setMargin(tutorialText, new Insets(10, 10, 0, 10));
-		GridPane.setMargin(prevButton, new Insets(0, 0, 10, 0));
-		GridPane.setMargin(nextButton, new Insets(0, 0, 10, 0));
+		GridPane.setMargin(prevLabel, new Insets(0, 0, 10, 0));
+		GridPane.setMargin(nextLabel, new Insets(0, 0, 10, 0));
 
+		this.setStyle("-fx-background-color: black;");
 		this.setTop(tutorialText);
 		this.setBottom(buttonGrid);
 	}
 
 	private void updateButtonState() {
 		if (tutorialPageIndex == 0)
-			prevButton.setDisable(true);
+			prevLabel.setDisable(true);
 		else
-			prevButton.setDisable(false);
+			prevLabel.setDisable(false);
 
 		if (tutorialPageIndex == tutorialTextList.size() - 1)
-			nextButton.setDisable(true);
+			nextLabel.setDisable(true);
 		else
-			nextButton.setDisable(false);
+			nextLabel.setDisable(false);
 	}
 
 	private void registerHandlers() {
-		nextButton.setOnAction(event -> {
-			tutorialPageIndex++;
+		prevLabel.setOnMouseClicked(event -> {
+			tutorialPageIndex--;
 			tutorialText.setText(tutorialTextList.get(tutorialPageIndex));
 			updateButtonState();
 		});
-
-		prevButton.setOnAction(event -> {
-			tutorialPageIndex--;
+		
+		nextLabel.setOnMouseClicked(event -> {
+			tutorialPageIndex++;
 			tutorialText.setText(tutorialTextList.get(tutorialPageIndex));
 			updateButtonState();
 		});
