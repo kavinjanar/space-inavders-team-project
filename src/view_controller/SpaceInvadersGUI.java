@@ -138,9 +138,9 @@ public class SpaceInvadersGUI extends Application {
 		pane.getChildren().add(scoreLabel);
 		pane.getChildren().add(scoreValueLabel);
 		pane.getChildren().add(livesLabel);
-		
+
 		Scene scene = new Scene(basePane, screenWidth, screenHeight);
-		
+
 		ColumnConstraints col1Constraints = new ColumnConstraints();
 		col1Constraints.setPercentWidth(100);
 
@@ -315,10 +315,10 @@ public class SpaceInvadersGUI extends Application {
 		randGen = new Random(System.currentTimeMillis());
 		alienGrid(stage);
 		currTimeline = moveAlienGrid(stage);
-		
+
 		registerMenuHandlers(stage);
 	}
-	
+
 	private void registerMenuHandlers(Stage stage) {
 		mainMenu = new MainMenuPane();
 		basePane.getChildren().add(mainMenu);
@@ -361,8 +361,8 @@ public class SpaceInvadersGUI extends Application {
 		});
 		gameOverPane.getRestartLabel().setOnMouseClicked(event -> {
 			// TODO reset game
-			 basePane.getChildren().remove(gameOverPane);
-			 basePane.getChildren().add(pane);
+			basePane.getChildren().remove(gameOverPane);
+			basePane.getChildren().add(pane);
 		});
 		gameOverPane.getMainMenuLabel().setOnMouseClicked(event -> {
 			basePane.getChildren().remove(gameOverPane);
@@ -457,7 +457,7 @@ public class SpaceInvadersGUI extends Application {
 							System.out.println("Alien hit: " + alienX + " " + alienY);
 							if (aliens[i][j].isAlive()) {
 								aliens[i][j].explode(); // Change the alien to an explosion image and mark it as not
-														// alive
+								// alive
 								soundPlayer.playExplosionSound(); // Play explosion sound
 
 								if (i == 0) {
@@ -472,10 +472,10 @@ public class SpaceInvadersGUI extends Application {
 								final int finalJ = j;
 
 								Timeline explosionTimeline = new Timeline(new KeyFrame(Duration.millis(500), // Duration
-																												// for
-																												// explosion
-																												// to
-																												// show
+										// for
+										// explosion
+										// to
+										// show
 										ae -> {
 											alienGridPane.getChildren().remove(aliens[finalI][finalJ]);
 											aliens[finalI][finalJ] = null;
@@ -546,14 +546,18 @@ public class SpaceInvadersGUI extends Application {
 					alien = new Alien1();
 				}
 
-				alien.setLayoutX(j * alienWidth); // x-coordinate relative to alienGridPane
-				alien.setLayoutY(i * alienHeight); // y-coordinate relative to alienGridPane
+				double alienActualWidth = alien.getBoundsInLocal().getWidth();
+				double centerX = (alienWidth - alienActualWidth) / 2; 
+
+				alien.setLayoutX(j * alienWidth + centerX); 
+				alien.setLayoutY(i * alienHeight); 
 
 				aliens[i][j] = alien;
 
 				alienGridPane.getChildren().add(alien);
 			}
 		}
+
 		if (!pane.getChildren().contains(alienGridPane))
 			pane.getChildren().add(alienGridPane);
 	}
@@ -580,9 +584,9 @@ public class SpaceInvadersGUI extends Application {
 				if (num < alienGridPane.getChildren().size()) {
 					Alien node = (Alien) alienGridPane.getChildren().get(num);
 					int x = (int) (node.getLayoutBounds().getCenterX() + node.getLayoutX()
-							+ alienGridPane.getLayoutX());
+					+ alienGridPane.getLayoutX());
 					int y = (int) (node.getLayoutBounds().getCenterY() + node.getLayoutY()
-							+ alienGridPane.getLayoutY());
+					+ alienGridPane.getLayoutY());
 					Bullet bullet = new Bullet(x, y, (int) bulletSpeed, true);
 					enemyBullets.add(bullet);
 					pane.getChildren().add(bullet.getImageView());
@@ -674,9 +678,9 @@ public class SpaceInvadersGUI extends Application {
 				if (num < alienGridPane.getChildren().size()) {
 					Alien node = (Alien) alienGridPane.getChildren().get(num);
 					int x = (int) (node.getLayoutBounds().getCenterX() + node.getLayoutX()
-							+ alienGridPane.getLayoutX());
+					+ alienGridPane.getLayoutX());
 					int y = (int) (node.getLayoutBounds().getCenterY() + node.getLayoutY()
-							+ alienGridPane.getLayoutY());
+					+ alienGridPane.getLayoutY());
 					Bullet bullet = new Bullet(x, y, (int) bulletSpeed, true);
 					enemyBullets.add(bullet);
 					pane.getChildren().add(bullet.getImageView());
