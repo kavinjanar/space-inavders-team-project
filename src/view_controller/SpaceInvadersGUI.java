@@ -36,6 +36,7 @@ import model.SpaceShip;
 
 public class SpaceInvadersGUI extends Application {
 	private Pane pane = new Pane();
+	private Pane basePane = new Pane();
 	private TutorialPane tutorialPane = new TutorialPane();
 	private Button tutorialButton;
 	private int numPlayers = 2;
@@ -76,6 +77,7 @@ public class SpaceInvadersGUI extends Application {
 	@Override
 	public void start(Stage stage) throws Exception {
 		pane.setStyle("-fx-background-color: black;");
+		basePane.setStyle("-fx-background-color: black;");
 				
 		// score label setup
 		Font scoreFont = Font.loadFont("file:fonts/space_invaders.ttf", 44);
@@ -143,18 +145,18 @@ public class SpaceInvadersGUI extends Application {
 		pane.getChildren().add(scoreValueLabel);
 		pane.getChildren().add(livesLabel);
 		
-		Parent parent = pane;
+		Parent parent = basePane;
 		
 		Scene scene = new Scene(parent, screenWidth, screenHeight);
 
 		mainMenu = new MainMenuPane();
+		basePane.getChildren().add(mainMenu);
 		mainMenu.setOnMousePressed(event -> {
-			stage.setScene(scene);
+			basePane.getChildren().remove(mainMenu);
+			basePane.getChildren().add(pane);
 			stage.setFullScreen(true);
 		});
 		
-		Scene menuScene = new Scene(mainMenu, screenWidth, screenHeight);
-
 		// Keyboard movement
 		scene.addEventFilter(KeyEvent.KEY_PRESSED, (KeyEvent event) -> {
 			if (!spaceship1.isDestroyed()) {
@@ -318,7 +320,7 @@ public class SpaceInvadersGUI extends Application {
 
 		stage.setFullScreen(true);
 		stage.setTitle("Space Invaders");
-		stage.setScene(menuScene);
+		stage.setScene(scene);
 		stage.show();
 		stage.requestFocus();
 		
