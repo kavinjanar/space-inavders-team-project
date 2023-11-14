@@ -39,6 +39,7 @@ public class SpaceInvadersGUI extends Application {
 	private Pane pane = new Pane();
 	private StackPane basePane = new StackPane();
 	private TutorialPane tutorialPane = new TutorialPane();
+	private OptionsPane optionsPane = new OptionsPane();
 	private int numPlayers = 2;
 	private SpaceShip spaceship1;
 	private SpaceShip spaceship2;
@@ -154,8 +155,16 @@ public class SpaceInvadersGUI extends Application {
 			basePane.getChildren().remove(mainMenu);
 			basePane.getChildren().add(tutorialPane);
 		});
+		mainMenu.getOptionsLabel().setOnMouseClicked(event -> {
+			basePane.getChildren().remove(mainMenu);
+			basePane.getChildren().add(optionsPane);
+		});
 		tutorialPane.getBackLabel().setOnMouseClicked(event -> {
 			basePane.getChildren().remove(tutorialPane);
+			basePane.getChildren().add(mainMenu);
+		});
+		optionsPane.getBackLabel().setOnMouseClicked(event -> {
+			basePane.getChildren().remove(optionsPane);
 			basePane.getChildren().add(mainMenu);
 		});
 		
