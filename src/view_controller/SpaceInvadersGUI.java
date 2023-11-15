@@ -321,7 +321,7 @@ public class SpaceInvadersGUI extends Application {
 
 	private void registerMenuHandlers(Stage stage) {
 		mainMenu = new MainMenuPane();
-		basePane.getChildren().add(gameOverPane);
+		basePane.getChildren().add(mainMenu);
 		mainMenu.getStartGameLabel().setOnMouseClicked(event -> {
 			basePane.getChildren().remove(mainMenu);
 			basePane.getChildren().add(playerSelectionPane);
