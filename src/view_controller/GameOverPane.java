@@ -3,6 +3,10 @@
  */
 package view_controller;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
@@ -12,6 +16,7 @@ import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.text.Font;
+import javafx.util.Duration;
 
 public final class GameOverPane extends GridPane {
 	private Label gameOverLabel = new Label("Game Over");
@@ -22,6 +27,7 @@ public final class GameOverPane extends GridPane {
 	public GameOverPane() {
 		initializeGUI();
 		registerHandlers();
+		flashGameOverLabel();
 	}
 
 	private void initializeGUI() {
@@ -41,7 +47,7 @@ public final class GameOverPane extends GridPane {
 		GridPane.setHalignment(restartLabel, HPos.CENTER);
 		GridPane.setHalignment(mainMenuLabel, HPos.CENTER);
 		GridPane.setHalignment(quitLabel, HPos.CENTER);
-		GridPane.setMargin(gameOverLabel, new Insets(0, 0, 30, 0));
+		GridPane.setMargin(gameOverLabel, new Insets(-74, 0, 30, 0));
 
 		ColumnConstraints col1Constraints = new ColumnConstraints();
 		col1Constraints.setPercentWidth(100);
@@ -74,6 +80,28 @@ public final class GameOverPane extends GridPane {
 
 	public Label getQuitLabel() {
 		return quitLabel;
+	}
+	
+	private void flashGameOverLabel() {
+	    Timeline timeline = new Timeline(
+	            new KeyFrame(Duration.seconds(0.75), new EventHandler<ActionEvent>() {
+	                private boolean white = true;
+
+	                @Override
+	                public void handle(ActionEvent event) {
+	                    if (white) {
+	                        gameOverLabel.setStyle("-fx-text-fill: #000000");
+	                    } else {
+	                        gameOverLabel.setStyle("-fx-text-fill: #FFFFFF");
+	                    }
+	                    
+	                    white = !white;
+	                }
+	            })
+	    );
+	    
+	    timeline.setCycleCount(Timeline.INDEFINITE);
+	    timeline.play();
 	}
 
 	private void registerHandlers() {
