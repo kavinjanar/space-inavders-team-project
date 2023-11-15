@@ -321,7 +321,7 @@ public class SpaceInvadersGUI extends Application {
 
 	private void registerMenuHandlers(Stage stage) {
 		mainMenu = new MainMenuPane();
-		basePane.getChildren().add(mainMenu);
+		basePane.getChildren().add(gameOverPane);
 		mainMenu.getStartGameLabel().setOnMouseClicked(event -> {
 			basePane.getChildren().remove(mainMenu);
 			basePane.getChildren().add(playerSelectionPane);
@@ -616,33 +616,8 @@ public class SpaceInvadersGUI extends Application {
 	private void endGame(Stage stage) {
 		timer.stop();
 		currTimeline.stop();
-
-		Stage gameOverStage = new Stage();
-		gameOverStage.initModality(Modality.WINDOW_MODAL);
-
-		VBox vBox = new VBox(10);
-		vBox.setAlignment(Pos.CENTER);
-		Label gameOverLabel = new Label("Game Over!");
-		Button retryButton = new Button("Try Again");
-		Button closeButton = new Button("Close");
-		closeButton.setOnAction((event) -> {
-			gameOverStage.close();
-			stage.close();
-		});
-		retryButton.setOnAction((event) -> {
-
-		});
-		vBox.getChildren().addAll(gameOverLabel, closeButton);
-
-		Scene gameOverScene = new Scene(vBox, 300, 200);
-		gameOverStage.setTitle("Game Over");
-		gameOverStage.setScene(gameOverScene);
-		gameOverStage.initOwner(stage);
-		gameOverStage.setX(stage.getX() + stage.getWidth() / 2 - gameOverStage.getWidth() / 2);
-		gameOverStage.setY(stage.getY() + stage.getHeight() / 2 - gameOverStage.getHeight() / 2);
-		gameOverStage.show();
-		gameOverStage.requestFocus();
-
+		basePane.getChildren().remove(pane);
+		basePane.getChildren().add(gameOverPane);
 	}
 
 	private void increaseDifficulty(Stage stage) {
