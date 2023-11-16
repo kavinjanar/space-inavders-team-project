@@ -5,11 +5,11 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 
 public class UFO extends Pane {
-    protected ImageView imageView;
-    protected Image image1;
-    protected boolean usingFirstImage;
-    protected Image explosionImage;
-    private boolean isAlive = true;
+	protected ImageView imageView;
+	protected Image image1;
+	protected boolean usingFirstImage;
+	protected Image explosionImage;
+	private boolean isAlive = true;
 
     public UFO() {
         this.image1 = new Image("file:images/ufo.png");
