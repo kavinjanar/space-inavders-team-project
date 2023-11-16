@@ -99,7 +99,7 @@ public class SpaceInvadersGUI extends Application {
 
 		// space ship initialization
 		Image spaceshipImage = new Image("file:images/Spaceship.png");
-		spaceship1 = new SpaceShip(spaceshipImage);
+		spaceship1 = new SpaceShip(spaceshipImage, "Balance Ship", 5, 3);
 
 		spaceship1.setFitWidth(50);
 		spaceship1.setFitHeight(60);
@@ -343,7 +343,7 @@ public class SpaceInvadersGUI extends Application {
 			basePane.getChildren().remove(playerSelectionPane);
 			basePane.getChildren().add(pane);
 			// add player 2
-			spaceship2 = new SpaceShip(new Image("file:images/Spaceship.png"));
+			spaceship2 = new SpaceShip(new Image("file:images/Spaceship.png"), "Balanced Ship", 5, 3);
 			spaceship2.setFitWidth(50);
 			spaceship2.setFitHeight(60);
 			spaceship2.setPreserveRatio(true);
