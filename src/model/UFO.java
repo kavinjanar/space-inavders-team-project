@@ -18,9 +18,11 @@ public class UFO extends Pane {
         this.imageView = new ImageView(image1);
         this.usingFirstImage = true;
 
-//        this.imageView.setFitWidth(50);
-        this.imageView.setFitHeight(30);
+        this.imageView.setFitWidth(100);
+        this.imageView.setFitHeight(40);
         getChildren().add(this.imageView);
+        
+        this.setStyle("-fx-background-color: red;");
     }
         
     public boolean isAlive() {

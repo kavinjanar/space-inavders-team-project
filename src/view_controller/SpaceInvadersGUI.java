@@ -5,6 +5,7 @@ import java.util.Random;
 
 import javafx.animation.AnimationTimer;
 import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.geometry.Rectangle2D;
@@ -29,6 +30,7 @@ import model.Bullet;
 import model.Shield;
 import model.SoundPlayer;
 import model.SpaceShip;
+import model.UFO;
 
 public class SpaceInvadersGUI extends Application {
 	private Pane pane = new Pane();
@@ -61,6 +63,9 @@ public class SpaceInvadersGUI extends Application {
 	private int score;
 	private AnimationTimer timer;
 	private MainMenuPane mainMenu;
+	private UFO ufo;
+	private Random random = new Random();
+	private Timeline ufoMovement;
 
 	// screen dimensions
 	private Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
@@ -311,6 +316,12 @@ public class SpaceInvadersGUI extends Application {
 		randGen = new Random(System.currentTimeMillis());
 		alienGrid(stage);
 		currTimeline = moveAlienGrid(stage);
+
+		//ufo
+		ufo = new UFO();
+		ufo.setVisible(false); // Initially hidden
+		pane.getChildren().add(ufo); // Add UFO to the main pane
+		setupUFOMovement();
 
 		registerMenuHandlers(stage);
 	}
@@ -662,5 +673,33 @@ public class SpaceInvadersGUI extends Application {
 		currTimeline.play();
 
 	}
+
+	private void setupUFOMovement() {
+	    ufoMovement = new Timeline(new KeyFrame(Duration.seconds(10), e -> {
+	        if (random.nextBoolean()) { // Randomly decide to show the UFO
+	            System.out.println("UFO is about to appear."); // Debug statement
+
+	            ufo.setVisible(true);
+	            ufo.setLayoutX(-ufo.getWidth()); // Starting position (left side, off-screen)
+	            ufo.setLayoutY(80); // Top of the screen
+
+	            System.out.println("UFO width: " + ufo.getWidth()); // Debug statement
+	            System.out.println("UFO initial X position: " + ufo.getLayoutX()); // Debug statement
+
+	            // Animate the UFO to move across the screen
+	            KeyValue keyValue = new KeyValue(ufo.layoutXProperty(), pane.getWidth());
+	            KeyFrame keyFrame = new KeyFrame(Duration.seconds(7), keyValue); // Adjust duration as needed
+	            Timeline timeline = new Timeline(keyFrame);
+	            timeline.setOnFinished(ev -> {
+	                ufo.setVisible(false); // Hide UFO after finishing the move
+	                System.out.println("UFO animation finished."); // Debug statement
+	            });
+	            timeline.play();
+	        }
+	    }));
+	    ufoMovement.setCycleCount(Timeline.INDEFINITE);
+	    ufoMovement.play();
+	}
+
 
 }
