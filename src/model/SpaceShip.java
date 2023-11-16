@@ -6,15 +6,20 @@ import javafx.scene.image.ImageView;
 public class SpaceShip extends ImageView {
 	private int lives;
 	private Bullet bullet;
+	private int speed;
+	private String name;
 	private static final double bulletSpeed = 12;
 	
 	public boolean moveLeft;
 	public boolean moveRight;
 	
-	public SpaceShip(Image image)
+	public SpaceShip(Image image, String name, int speed, int lives)
 	{
 		super(image);
-		lives = 3;
+		this.lives = lives;
+		this.speed = speed;
+		this.name = name;
+		
 	}
 	
 	public void hitShip() {
@@ -22,6 +27,10 @@ public class SpaceShip extends ImageView {
 	}
 	
 	public int getLives() { return lives; }
+	
+	public int getSpeed() { return speed; }
+	
+	public String getName() { return name; }
 	
 	public void addLife() {
 		lives++;
@@ -42,4 +51,5 @@ public class SpaceShip extends ImageView {
 	public void deleteBullet() {
 		bullet = null;
 	}
+	
 }
