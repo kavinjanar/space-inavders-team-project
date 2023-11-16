@@ -459,8 +459,9 @@ public class SpaceInvadersGUI extends Application {
 					if (aliens[i][j] != null && aliens[i][j].isAlive()) {
 						double alienX = alienGridPane.getLayoutX() + aliens[i][j].getLayoutX();
 						double alienY = alienGridPane.getLayoutY() + aliens[i][j].getLayoutY();
-						double alienSize = 50.0;
-						if (bullet.withinBounds(alienX, alienY, alienX + alienSize, alienY + alienSize)) {
+			            double alienWidth = aliens[i][j].getBoundsInLocal().getWidth();
+			            double alienHeight = aliens[i][j].getBoundsInLocal().getHeight();
+			            if (bullet.withinBounds(alienX, alienY, alienX + alienWidth, alienY + alienHeight)) {
 							System.out.println("Alien hit: " + alienX + " " + alienY);
 							if (aliens[i][j].isAlive()) {
 								aliens[i][j].explode(); // Change the alien to an explosion image and mark it as not
