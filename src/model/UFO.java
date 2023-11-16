@@ -13,6 +13,7 @@ public class UFO extends Pane {
 
     public UFO() {
         this.image1 = new Image("file:images/ufo.png");
+        this.explosionImage = new Image("file:images/explosionred.png");
         
         // Initially set the image view to the first image
         this.imageView = new ImageView(image1);
@@ -20,12 +21,24 @@ public class UFO extends Pane {
 
         this.imageView.setFitWidth(100);
         this.imageView.setFitHeight(40);
+        //this.imageView.setPreserveRatio(true);
         getChildren().add(this.imageView);
-        
-        this.setStyle("-fx-background-color: red;");
     }
         
     public boolean isAlive() {
         return isAlive;
+    }
+    
+    public void revive() {
+    	this.imageView.setImage(image1);
+    	isAlive = true;
+    }
+    
+    /**
+     * switches alien image to explode
+     */
+    public void explode() {
+        imageView.setImage(explosionImage);
+        isAlive = false;
     }
 }
