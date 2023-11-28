@@ -36,6 +36,7 @@ public class SpaceInvadersGUI extends Application {
 	private Pane pane = new Pane();
 	private StackPane basePane = new StackPane();
 	private TutorialPane tutorialPane = new TutorialPane();
+	private UpgradeShipPane upgradeShipPane = new UpgradeShipPane();
 	private OptionsPane optionsPane = new OptionsPane();
 	private GameOverPane gameOverPane = new GameOverPane();
 	private PlayerSelectionPane playerSelectionPane = new PlayerSelectionPane();
@@ -99,7 +100,7 @@ public class SpaceInvadersGUI extends Application {
 
 		// space ship initialization
 		Image spaceshipImage = new Image("file:images/Spaceship.png");
-		spaceship1 = new SpaceShip(spaceshipImage, "Balance Ship", 5, 3);
+		spaceship1 = new SpaceShip(spaceshipImage, "Balanced Ship", 5, 3);
 
 		spaceship1.setFitWidth(50);
 		spaceship1.setFitHeight(60);
@@ -216,9 +217,9 @@ public class SpaceInvadersGUI extends Application {
 			public void handle(long arg0) {
 				// spaceship 1 stuff
 				if (spaceship1.moveLeft)
-					spaceship1.setLayoutX(spaceship1.getLayoutX() - playerSpeed);
+					spaceship1.setLayoutX(spaceship1.getLayoutX() - spaceship1.getSpeed());
 				if (spaceship1.moveRight)
-					spaceship1.setLayoutX(spaceship1.getLayoutX() + playerSpeed);
+					spaceship1.setLayoutX(spaceship1.getLayoutX() + spaceship1.getSpeed());
 
 				Bullet plyrBullet = spaceship1.getBullet();
 				// Reset bullet position if out of bounds
@@ -315,7 +316,7 @@ public class SpaceInvadersGUI extends Application {
 
 	private void registerMenuHandlers(Stage stage) {
 		mainMenu = new MainMenuPane();
-		basePane.getChildren().add(mainMenu);
+		basePane.getChildren().add(mainMenu);		
 		mainMenu.getStartGameLabel().setOnMouseClicked(event -> {
 			basePane.getChildren().remove(mainMenu);
 			basePane.getChildren().add(playerSelectionPane);
@@ -491,7 +492,8 @@ public class SpaceInvadersGUI extends Application {
 											aliens[finalI][finalJ] = null;
 											if (allAliensDestroyed()) {
 												System.out.println("Increasing difficulty");
-												increaseDifficulty(stage);
+												//increaseDifficulty(stage);
+												upgradeShip(stage);
 												currTimeline.play();
 											}
 										}));
@@ -646,8 +648,45 @@ public class SpaceInvadersGUI extends Application {
 		basePane.getChildren().remove(pane);
 		basePane.getChildren().add(gameOverPane);
 	}
+	
+	private void upgradeShip(Stage stage) {
+		SpaceShip currShip = new SpaceShip(spaceship1.getImage(), spaceship1.getName(), spaceship1.getSpeed(), spaceship1.getOriginalLives());
+		timer.stop();
+		currTimeline.stop();
+		ufoMovement.stop();
+		ufoMoveTimeline.stop();
+		basePane.getChildren().remove(pane);
+		basePane.getChildren().add(upgradeShipPane);
+		upgradeShipPane.setShipInfo(spaceship1);
+		upgradeShipPane.getConfirmLabel().setOnMouseClicked((event) -> {
+			basePane.getChildren().remove(upgradeShipPane);
+		    basePane.getChildren().add(pane);
+		    System.out.println("Modified ship speed: " + spaceship1.getSpeed());
+		    System.out.println("Modified ship lives: " + spaceship1.getLives());
+		    timer.start();
+		    currTimeline = moveAlienGrid(stage); // Reset currTimeline with the new timeline
+		    currTimeline.play(); // Start the new timeline for alien movement
+		    ufoMovement.play();
+		    ufoMoveTimeline.play();
+		    increaseDifficulty(stage);
+		    setLives();
+		});
+		upgradeShipPane.getCancelLabel().setOnMouseClicked((event) -> {
+			basePane.getChildren().remove(upgradeShipPane);
+			basePane.getChildren().add(pane);
+			spaceship1 = currShip;
+			timer.start();
+		    currTimeline = moveAlienGrid(stage); // Reset currTimeline with the new timeline
+		    currTimeline.play(); // Start the new timeline for alien movement
+		    ufoMovement.play();
+		    ufoMoveTimeline.play();
+		    increaseDifficulty(stage);
+			setLives();
+		});
+	}
 
 	private void increaseDifficulty(Stage stage) {
+		System.out.println("entering method");
 		pauseDuration = pauseDuration * 0.7;
 		currTimeline.stop();
 		currTimeline.getKeyFrames().clear();

@@ -5,6 +5,7 @@ import javafx.scene.image.ImageView;
 
 public class SpaceShip extends ImageView {
 	private int lives;
+	private int originalLives;
 	private Bullet bullet;
 	private int speed;
 	private String name;
@@ -19,6 +20,7 @@ public class SpaceShip extends ImageView {
 		this.lives = lives;
 		this.speed = speed;
 		this.name = name;
+		this.originalLives = lives;
 		
 	}
 	
@@ -36,6 +38,8 @@ public class SpaceShip extends ImageView {
 		lives++;
 	}
 	
+	public int getOriginalLives() { return originalLives; }
+	
 	public boolean isDestroyed() { return lives <= 0; }
 	
 	public Bullet getBullet() { return bullet; }
@@ -50,6 +54,27 @@ public class SpaceShip extends ImageView {
 	
 	public void deleteBullet() {
 		bullet = null;
+	}
+	
+	public void changeToSpeedyShip()
+	{
+		speed = 8;
+		lives = 2;
+		originalLives = 2;
+	}
+	
+	public void changeToBulkyShip()
+	{
+		speed = 2;
+		lives = 5;
+		originalLives = 5;
+	}
+	
+	public void changeToBalancedShip()
+	{
+		speed = 5;
+		lives = 3;
+		originalLives = 3;
 	}
 	
 }
