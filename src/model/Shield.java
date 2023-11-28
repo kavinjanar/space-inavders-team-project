@@ -7,11 +7,11 @@ public class Shield extends ImageView {
 	private int health;
 	private static final int INITIAL_HEALTH = 4;
 	
-	public Shield(int x, int y, int size) {
+	public Shield(double x, double y, int size) {
 		health = INITIAL_HEALTH;
 		updateImage();
-		this.setLayoutX((double)x);
-		this.setLayoutY((double)y);
+		this.setLayoutX(x);
+		this.setLayoutY(y);
 		this.setFitWidth(size);
 		this.setFitHeight(size);
 	}

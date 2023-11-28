@@ -11,11 +11,13 @@ import javafx.application.Application;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Font;
@@ -111,19 +113,7 @@ public class SpaceInvadersGUI extends Application {
 
 		setLives();
 
-		// Add shields
-		for (int y = (int) (screenHeight * 0.65); y <= (int) (screenHeight * 0.70); y += (int) (screenHeight * 0.05)) {
-			for (int offset = -1 * (int) (screenHeight * 0.05); offset <= (int) (screenHeight
-					* 0.05); offset += (int) (screenHeight * 0.05)) {
-				for (int x = (int) screenWidth / 10; x <= 9 * (int) screenWidth / 10; x += (int) screenWidth / 5) {
-					if (y > (int) (screenHeight * 0.65) && offset == 0)
-						continue;
-					Shield shield = new Shield(x + offset - 12, y, (int) (screenHeight * 0.05));
-					shields.add(shield);
-					pane.getChildren().add(shield);
-				}
-			}
-		}
+		addShields();
 
 		pane.getChildren().add(scoreLabel);
 		pane.getChildren().add(scoreValueLabel);
@@ -312,6 +302,32 @@ public class SpaceInvadersGUI extends Application {
 		setupUFOMovement();
 
 		registerMenuHandlers(stage);
+		
+		// TODO: REMOVE BEFORE SUBMITTING
+		HBox devMenu = new HBox();
+		devMenu.setLayoutX(0);
+		devMenu.setLayoutY(0);
+		pane.getChildren().add(devMenu);
+		Button nextLevelCheat = new Button("Next Level");
+		devMenu.getChildren().add(nextLevelCheat);
+		nextLevelCheat.setOnMouseClicked(e -> {
+			alienGridPane.getChildren().clear();
+			increaseDifficulty(stage);
+			currTimeline.play();
+		});
+		Button dieButton = new Button("Die");
+		devMenu.getChildren().add(dieButton);
+		dieButton.setOnMouseClicked(e -> {
+			spaceship1.hitShip();
+			if (spaceship2 != null) spaceship2.hitShip();
+			setLives();
+			if (spaceship1.isDestroyed() && spaceship2 == null) {
+				endGame(stage);
+			}
+			else if (spaceship1.isDestroyed() && spaceship2 != null && spaceship2.isDestroyed()) {
+				endGame(stage);
+			}
+		});
 	}
 
 	private void registerMenuHandlers(Stage stage) {
@@ -335,6 +351,11 @@ public class SpaceInvadersGUI extends Application {
 		playerSelectionPane.getSinglePlayerLabel().setOnMouseClicked(event -> {
 			basePane.getChildren().remove(playerSelectionPane);
 			basePane.getChildren().add(pane);
+			// make sure there is no player 2
+			if (spaceship2 != null) {
+				pane.getChildren().remove(spaceship2);
+				spaceship2 = null;
+			}
 			// start the game
 			currTimeline.play();
 			timer.start();
@@ -344,13 +365,15 @@ public class SpaceInvadersGUI extends Application {
 			basePane.getChildren().remove(playerSelectionPane);
 			basePane.getChildren().add(pane);
 			// add player 2
-			spaceship2 = new SpaceShip(new Image("file:images/Spaceship.png"), "Balanced Ship", 5, 3);
+			if (spaceship2 == null) {
+				spaceship2 = new SpaceShip(new Image("file:images/Spaceship.png"), "Balanced Ship", 5, 3);
+				pane.getChildren().add(spaceship2);
+			}
 			spaceship2.setFitWidth(50);
 			spaceship2.setFitHeight(60);
 			spaceship2.setPreserveRatio(true);
 			spaceship2.setLayoutX(screenWidth / 2 - spaceship1.getFitWidth() / 2);
 			spaceship2.setLayoutY(screenHeight * 0.85);
-			pane.getChildren().add(spaceship2);
 			// start the game
 			currTimeline.play();
 			timer.start();
@@ -369,14 +392,19 @@ public class SpaceInvadersGUI extends Application {
 			basePane.getChildren().add(mainMenu);
 		});
 		gameOverPane.getRestartLabel().setOnMouseClicked(event -> {
-			// TODO reset game
 			basePane.getChildren().remove(gameOverPane);
+			resetGame(stage);
 			basePane.getChildren().add(pane);
+			
+			// start the game
+			currTimeline.play();
+			timer.start();
+			ufoMovement.play();
 		});
 		gameOverPane.getMainMenuLabel().setOnMouseClicked(event -> {
 			basePane.getChildren().remove(gameOverPane);
+			resetGame(stage);
 			basePane.getChildren().add(mainMenu);
-			// TODO reset game
 		});
 		gameOverPane.getQuitLabel().setOnMouseClicked(event -> {
 			stage.close();
@@ -531,8 +559,25 @@ public class SpaceInvadersGUI extends Application {
 	private void incrementScore(int increment) {
 		System.out.print("New score = " + score + " + " + increment);
 		score += increment;
-		System.out.println(" " + score);
+		System.out.println(" = " + score);
 		scoreValueLabel.setText("" + score);
+	}
+	
+	private void addShields() {
+		// Add shields
+		for (int y = (int) (screenHeight * 0.65); y <= (int) (screenHeight * 0.70); y += (int) (screenHeight * 0.05)) {
+			for (int offset = -1 * (int) (screenHeight * 0.05); offset <= (int) (screenHeight
+					* 0.05); offset += (int) (screenHeight * 0.05)) {
+				for (int x = (int) screenWidth / 10; x <= 9 * (int) screenWidth / 10; x += (int) screenWidth / 5) {
+					if (y > (int) (screenHeight * 0.65) && offset == 0)
+						continue;
+					int size = (int) (screenHeight * 0.05);
+					Shield shield = new Shield(x + offset - size/2, y, size);
+					shields.add(shield);
+					pane.getChildren().add(shield);
+				}
+			}
+		}
 	}
 
 	/**
@@ -644,9 +689,53 @@ public class SpaceInvadersGUI extends Application {
 		timer.stop();
 		currTimeline.stop();
 		ufoMovement.stop();
-		ufoMoveTimeline.stop();
+		if (ufoMoveTimeline != null)
+			ufoMoveTimeline.stop();
 		basePane.getChildren().remove(pane);
 		basePane.getChildren().add(gameOverPane);
+	}
+	
+	private void resetGame(Stage stage) {
+		score = 0;
+		pauseDuration = 1;
+		
+		for (Shield shield : shields)
+			shield.resetHealth();
+		
+		spaceship1.setLayoutX((screenWidth - spaceship1.getFitWidth()) / 2.0);
+		spaceship1.changeToBalancedShip();
+		fireBullet1 = false;
+		spaceship1.moveLeft = false;
+		spaceship1.moveRight = false;
+		spaceship1.setVisible(true);
+		if (spaceship1.getBullet() != null) {
+			pane.getChildren().remove(spaceship1.getBullet().getImageView());
+			spaceship1.deleteBullet();
+		}
+		setLives();
+		if (spaceship2 != null) {
+			spaceship2.setLayoutX((screenWidth - spaceship2.getFitWidth()) / 2.0);
+			spaceship2.changeToBalancedShip();
+			fireBullet2 = false;
+			spaceship2.moveLeft = false;
+			spaceship2.moveRight = false;
+			spaceship2.setVisible(true);
+			if (spaceship2.getBullet() != null) {
+				pane.getChildren().remove(spaceship2.getBullet().getImageView());
+				spaceship2.deleteBullet();
+			}
+		}
+		
+		for (Bullet bullet : enemyBullets) {
+			pane.getChildren().remove(bullet.getImageView());
+		}
+		enemyBullets.clear();
+		
+		alienGrid(stage);
+		
+		ufo.explode();
+		ufo.setVisible(false);
+		ufo.setLayoutX(-ufo.getWidth());
 	}
 	
 	private void upgradeShip(Stage stage) {
@@ -654,7 +743,8 @@ public class SpaceInvadersGUI extends Application {
 		timer.stop();
 		currTimeline.stop();
 		ufoMovement.stop();
-		ufoMoveTimeline.stop();
+		if (ufoMoveTimeline != null)
+			ufoMoveTimeline.stop();
 		basePane.getChildren().remove(pane);
 		basePane.getChildren().add(upgradeShipPane);
 		upgradeShipPane.setShipInfo(spaceship1);
@@ -667,7 +757,8 @@ public class SpaceInvadersGUI extends Application {
 		    currTimeline = moveAlienGrid(stage); // Reset currTimeline with the new timeline
 		    currTimeline.play(); // Start the new timeline for alien movement
 		    ufoMovement.play();
-		    ufoMoveTimeline.play();
+		    if (ufoMoveTimeline != null)
+		    	ufoMoveTimeline.play();
 		    increaseDifficulty(stage);
 		    setLives();
 		});
@@ -679,7 +770,8 @@ public class SpaceInvadersGUI extends Application {
 		    currTimeline = moveAlienGrid(stage); // Reset currTimeline with the new timeline
 		    currTimeline.play(); // Start the new timeline for alien movement
 		    ufoMovement.play();
-		    ufoMoveTimeline.play();
+		    if (ufoMoveTimeline != null)
+		    	ufoMoveTimeline.play();
 		    increaseDifficulty(stage);
 			setLives();
 		});
@@ -688,6 +780,7 @@ public class SpaceInvadersGUI extends Application {
 	private void increaseDifficulty(Stage stage) {
 		System.out.println("entering method");
 		pauseDuration = pauseDuration * 0.7;
+		System.out.println("New update duration: " + pauseDuration);
 		currTimeline.stop();
 		currTimeline.getKeyFrames().clear();
 		KeyFrame newKeyFrame = new KeyFrame(Duration.seconds(pauseDuration), e -> {

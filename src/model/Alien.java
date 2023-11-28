@@ -30,6 +30,7 @@ public class Alien extends Pane {
      * switches between image1 and image2, and vice versa
      */
     public void switchImage() {
+    	if (!isAlive) return;
         if (usingFirstImage) {
             imageView.setImage(image2);
             usingFirstImage = false;

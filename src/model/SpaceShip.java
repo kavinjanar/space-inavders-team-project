@@ -39,7 +39,7 @@ public class SpaceShip extends ImageView {
 	}
 	
 	public int getOriginalLives() { return originalLives; }
-	
+		
 	public boolean isDestroyed() { return lives <= 0; }
 	
 	public Bullet getBullet() { return bullet; }
