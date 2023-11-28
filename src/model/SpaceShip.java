@@ -58,6 +58,7 @@ public class SpaceShip extends ImageView {
 	
 	public void changeToSpeedyShip()
 	{
+		name = "Speedy Ship";
 		speed = 8;
 		lives = 2;
 		originalLives = 2;
@@ -65,6 +66,7 @@ public class SpaceShip extends ImageView {
 	
 	public void changeToBulkyShip()
 	{
+		name = "Bulky Ship";
 		speed = 2;
 		lives = 5;
 		originalLives = 5;
@@ -72,6 +74,7 @@ public class SpaceShip extends ImageView {
 	
 	public void changeToBalancedShip()
 	{
+		name = "Balanced Ship";
 		speed = 5;
 		lives = 3;
 		originalLives = 3;

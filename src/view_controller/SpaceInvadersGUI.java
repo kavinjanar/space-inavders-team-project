@@ -674,7 +674,19 @@ public class SpaceInvadersGUI extends Application {
 		upgradeShipPane.getCancelLabel().setOnMouseClicked((event) -> {
 			basePane.getChildren().remove(upgradeShipPane);
 			basePane.getChildren().add(pane);
-			spaceship1 = currShip;
+			if (currShip.getName() == "Balanced Ship")
+			{
+				spaceship1.changeToBalancedShip();
+			}
+			if (currShip.getName() == "Speedy Ship")
+			{
+				spaceship1.changeToSpeedyShip();
+			}
+			if (currShip.getName() == "Chunky Ship")
+			{
+				spaceship1.changeToSpeedyShip();
+			}
+			
 			timer.start();
 		    currTimeline = moveAlienGrid(stage); // Reset currTimeline with the new timeline
 		    currTimeline.play(); // Start the new timeline for alien movement
