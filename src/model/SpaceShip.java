@@ -58,23 +58,32 @@ public class SpaceShip extends ImageView {
 	
 	public void changeToSpeedyShip()
 	{
+		name = "Speedy Ship";
 		speed = 8;
 		lives = 2;
 		originalLives = 2;
+		Image speedyShipImage = new Image("file:images/Spaceship2.png");
+		this.setImage(speedyShipImage);
 	}
 	
 	public void changeToBulkyShip()
 	{
+		name = "Bulky Ship";
 		speed = 2;
 		lives = 5;
 		originalLives = 5;
+		Image chunkyShipImage = new Image("file:images/Spaceship3.png");
+		this.setImage(chunkyShipImage);
 	}
 	
 	public void changeToBalancedShip()
 	{
+		name = "Balanced Ship";
 		speed = 5;
 		lives = 3;
 		originalLives = 3;
+		Image balancedShipImage = new Image("file:images/Spaceship.png");
+		this.setImage(balancedShipImage);
 	}
 	
 }
