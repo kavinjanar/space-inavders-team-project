@@ -692,6 +692,7 @@ public class SpaceInvadersGUI extends Application {
 		if (ufoMoveTimeline != null)
 			ufoMoveTimeline.stop();
 		basePane.getChildren().remove(pane);
+		gameOverPane.setScore(score);
 		basePane.getChildren().add(gameOverPane);
 	}
 	
