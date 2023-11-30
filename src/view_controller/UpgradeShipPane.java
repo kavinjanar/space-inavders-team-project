@@ -208,10 +208,7 @@ public final class UpgradeShipPane extends GridPane {
 			nameLabel2.setStyle("-fx-text-fill: #00ff5a");
 		});
 		nameLabel2.setOnMouseClicked(new ShipSelectionHandler());
-		
-<<<<<<< HEAD
-		
-=======
+
 		confirmLabel.setOnMouseEntered(event -> {
 			confirmLabel.setStyle("-fx-text-fill: #79FFA8");
 		});
@@ -225,7 +222,6 @@ public final class UpgradeShipPane extends GridPane {
 		cancelLabel.setOnMouseExited(event -> {
 			cancelLabel.setStyle("-fx-text-fill: #00ff5a");
 		});
->>>>>>> 6375f1d947d877cf06f3efcc535ec18e10819736
 	}
 
 	

@@ -48,7 +48,6 @@ public class SpaceInvadersGUI extends Application {
 	private SpaceShip spaceship2;
 	private boolean fireBullet1 = false;
 	private boolean fireBullet2 = false;
-	private final double playerSpeed = 5;
 	private final double bulletSpeed = 12;
 	private ArrayList<Bullet> enemyBullets = new ArrayList<>();
 	private ArrayList<Shield> shields = new ArrayList<>();
@@ -330,7 +329,7 @@ public class SpaceInvadersGUI extends Application {
 		devMenu.getChildren().add(nextLevelCheat);
 		nextLevelCheat.setOnMouseClicked(e -> {
 			alienGridPane.getChildren().clear();
-			upgradeShip(stage);
+			upgradeShip(stage, "Player 1", spaceship1);
 		});
 		Button dieButton = new Button("Die");
 		devMenu.getChildren().add(dieButton);
@@ -390,6 +389,11 @@ public class SpaceInvadersGUI extends Application {
 			if (spaceship2 != null) {
 				pane.getChildren().remove(spaceship2);
 				spaceship2 = null;
+				for (ImageView life : livesList2) {
+					pane.getChildren().remove(life);
+				}
+				livesList2.clear();
+				pane.getChildren().remove(p2LivesLabel);
 			}
 			// start the game
 			currTimeline.play();
@@ -582,13 +586,7 @@ public class SpaceInvadersGUI extends Application {
 											aliens[finalI][finalJ] = null;
 											if (allAliensDestroyed()) {
 												System.out.println("Increasing difficulty");
-<<<<<<< HEAD
-												//increaseDifficulty(stage);
 												upgradeShip(stage, "Player 1", spaceship1);
-												currTimeline.play();
-=======
-												upgradeShip(stage);
->>>>>>> 6375f1d947d877cf06f3efcc535ec18e10819736
 											}
 										}));
 								explosionTimeline.setCycleCount(1);
@@ -825,10 +823,6 @@ public class SpaceInvadersGUI extends Application {
 		ufo.setLayoutX(-ufo.getWidth());
 		gameOverPane = new GameOverPane();
 		registerMenuHandlers(stage);
-<<<<<<< HEAD
-		
-=======
->>>>>>> 6375f1d947d877cf06f3efcc535ec18e10819736
 	}
 	
 	private void upgradeShip(Stage stage, String player, SpaceShip ship) {
