@@ -29,7 +29,10 @@ public final class UpgradeShipPane extends GridPane {
 	private Label speedLabel2 = new Label("Speed: ");
 	private Label confirmLabel = new Label("Confirm");
 	private Label cancelLabel = new Label("Cancel");
+	private ImageView shipImage1 = new ImageView();
+    private ImageView shipImage2 = new ImageView();
 	private SpaceShip spaceShip;
+
 	
 	public UpgradeShipPane()
 	{
@@ -39,7 +42,19 @@ public final class UpgradeShipPane extends GridPane {
 	
 	private void initializeGUI() {
 	    Font spaceFont = Font.loadFont("file:fonts/space_invaders.ttf", 36);
-	    Font spaceFontLarge = Font.loadFont("file:fonts/space_invaders.ttf", 72);
+	    Font spaceFontLarge = Font.loadFont("file:fonts/space_invaders.ttf", 60);
+	    
+	    Image img1 = new Image("file:images/Spaceship.png"); // Replace with your image path
+	    shipImage1.setImage(img1);
+	    shipImage1.setFitHeight(100); // Adjust size as needed
+	    shipImage1.setFitWidth(100); // Adjust size as needed
+	    shipImage1.setPreserveRatio(true);
+
+	    Image img2 = new Image("file:images/Spaceship2.png"); // Replace with your image path
+	    shipImage2.setImage(img2);
+	    shipImage2.setFitHeight(100); // Adjust size as needed
+	    shipImage2.setFitWidth(100); // Adjust size as needed
+	    shipImage2.setPreserveRatio(true);
 
 	    // Set fonts and styles for labels
 	    promptLabel.setFont(spaceFontLarge);
@@ -63,6 +78,8 @@ public final class UpgradeShipPane extends GridPane {
 
 	    // Set alignments for labels
 	    GridPane.setHalignment(promptLabel, HPos.CENTER);
+	    GridPane.setHalignment(shipImage1, HPos.CENTER);
+        GridPane.setHalignment(shipImage2, HPos.CENTER);
 	    GridPane.setHalignment(nameLabel, HPos.CENTER);
 	    GridPane.setHalignment(livesLabel, HPos.CENTER);
 	    GridPane.setHalignment(speedLabel, HPos.CENTER);
@@ -74,6 +91,8 @@ public final class UpgradeShipPane extends GridPane {
 
 	    // Set margins for labels
 	    GridPane.setMargin(promptLabel, new Insets(20, 0, 20, 0)); // Top, Right, Bottom, Left
+	    GridPane.setMargin(shipImage1, new Insets(10, 20, 0, 20)); // Image above nameLabel
+        GridPane.setMargin(shipImage2, new Insets(10, 20, 0, 20)); // Image above nameLabel2
 	    GridPane.setMargin(nameLabel, new Insets(10, 20, 10, 20)); // Add margins to prevent touching sides
 	    GridPane.setMargin(livesLabel, new Insets(10, 20, 10, 20));
 	    GridPane.setMargin(speedLabel, new Insets(10, 20, 10, 20));
@@ -90,16 +109,18 @@ public final class UpgradeShipPane extends GridPane {
 	    column2.setPercentWidth(50); // Adjust as needed
 	    this.getColumnConstraints().addAll(column1, column2);
 
-	    // Add components to grid
-	    this.add(promptLabel, 0, 0, 2, 1); // Spanning two columns
-	    this.add(nameLabel, 0, 1);
-	    this.add(livesLabel, 0, 2);
-	    this.add(speedLabel, 0, 3);
-	    this.add(nameLabel2, 1, 1);
-	    this.add(livesLabel2, 1, 2);
-	    this.add(speedLabel2, 1, 3);
-	    this.add(confirmLabel, 0, 4, 2, 1); // Spanning two columns
-	    this.add(cancelLabel, 0, 5, 2, 1); // Spanning two columns
+	 // Add components to grid
+        this.add(promptLabel, 0, 0, 2, 1); // Spanning two columns
+        this.add(shipImage1, 0, 1);
+        this.add(nameLabel, 0, 2);
+        this.add(livesLabel, 0, 3);
+        this.add(speedLabel, 0, 4);
+        this.add(shipImage2, 1, 1);
+        this.add(nameLabel2, 1, 2);
+        this.add(livesLabel2, 1, 3);
+        this.add(speedLabel2, 1, 4);
+        this.add(confirmLabel, 0, 5, 2, 1); // Spanning two columns
+        this.add(cancelLabel, 0, 6, 2, 1); // Spanning two columns
 
 	    // Set grid pane style and padding
 	    this.setStyle("-fx-background-color: black;");
@@ -107,37 +128,43 @@ public final class UpgradeShipPane extends GridPane {
 	}
 
 	
-	public void setShipInfo(SpaceShip currShip)
+	public void setShipInfo(SpaceShip currShip, String player)
 	{
-		
+		promptLabel.setText("Do you want to change your ship, " + player + "?");
 		spaceShip = currShip;
 		
 		if (currShip.getName().equals("Balanced Ship"))
 		{
+			shipImage1.setImage(new Image("file:images/Spaceship3.png"));
 			nameLabel.setText("Name: Chunky Ship");
 			livesLabel.setText("Lives: 5");
 			speedLabel.setText("Speed: 3");
 			
+			shipImage2.setImage(new Image("file:images/Spaceship2.png"));
 			nameLabel2.setText("Name: Speedy Ship");
 			livesLabel2.setText("Lives: 2");
 			speedLabel2.setText("Speed: 8");
 		}
 		if (currShip.getName().equals("Speedy Ship"))
 		{
+			shipImage1.setImage(new Image("file:images/Spaceship3.png"));
 			nameLabel.setText("Name: Chunky Ship");
 			livesLabel.setText("Lives: 5");
 			speedLabel.setText("Speed: 3");
 			
+			shipImage2.setImage(new Image("file:images/Spaceship.png"));
 			nameLabel2.setText("Name: Balanced Ship");
 			livesLabel2.setText("Lives: 3");
 			speedLabel2.setText("Speed: 5");
 		}
 		if (currShip.getName().equals("Chunky Ship"))
 		{
+			shipImage1.setImage(new Image("file:images/Spaceship2.png"));
 			nameLabel.setText("Name: Speedy Ship");
 			livesLabel.setText("Lives: 2");
 			speedLabel.setText("Speed: 8");
 			
+			shipImage2.setImage(new Image("file:images/Spaceship.png"));
 			nameLabel2.setText("Name: Balanced Ship");
 			livesLabel2.setText("Lives: 3");
 			speedLabel2.setText("Speed: 5");
@@ -164,28 +191,6 @@ public final class UpgradeShipPane extends GridPane {
 	{
 		return cancelLabel;
 	}
-	
-	private void flashGameOverLabel() {
-	    Timeline timeline = new Timeline(
-	            new KeyFrame(Duration.seconds(0.75), new EventHandler<ActionEvent>() {
-	                private boolean white = true;
-
-	                @Override
-	                public void handle(ActionEvent event) {
-	                    if (white) {
-	                        promptLabel.setStyle("-fx-text-fill: #000000");
-	                    } else {
-	                        promptLabel.setStyle("-fx-text-fill: #FFFFFF");
-	                    }
-	                    
-	                    white = !white;
-	                }
-	            })
-	    );
-	    
-	    timeline.setCycleCount(Timeline.INDEFINITE);
-	    timeline.play();
-	}
 
 	private void registerHandlers() {
 		nameLabel.setOnMouseEntered(event -> {
@@ -205,7 +210,9 @@ public final class UpgradeShipPane extends GridPane {
 		
 		nameLabel2.setOnMouseClicked(new ShipSelectionHandler());
 		
+		
 	}
+
 	
 	public class ShipSelectionHandler implements EventHandler<MouseEvent>{
 

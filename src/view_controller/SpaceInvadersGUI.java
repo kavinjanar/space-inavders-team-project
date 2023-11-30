@@ -60,8 +60,10 @@ public class SpaceInvadersGUI extends Application {
 	private SoundPlayer soundPlayer;
 	private Label scoreLabel = new Label("Score");
 	private Label scoreValueLabel = new Label("0");
-	private Label livesLabel = new Label("Lives");
+	private Label p1LivesLabel = new Label("Lives (P1):");
+	private Label p2LivesLabel = new Label("Lives (P2):");
 	private ArrayList<ImageView> livesList = new ArrayList<ImageView>();
+	private ArrayList<ImageView> livesList2 = new ArrayList<ImageView>();
 	private int score;
 	private AnimationTimer timer;
 	private MainMenuPane mainMenu;
@@ -95,10 +97,16 @@ public class SpaceInvadersGUI extends Application {
 		scoreValueLabel.setLayoutX(240);
 		scoreValueLabel.setLayoutY(20);
 
-		livesLabel.setFont(scoreFont);
-		livesLabel.setStyle("-fx-text-fill: #FFFFFF");
-		livesLabel.setLayoutX(screenWidth - 370);
-		livesLabel.setLayoutY(20);
+		Font livesFont = Font.loadFont("file:fonts/space_invaders.ttf", 25);
+		p1LivesLabel.setFont(livesFont);
+		p1LivesLabel.setStyle("-fx-text-fill: #FFFFFF");
+		p1LivesLabel.setLayoutX(screenWidth - 400);
+		p1LivesLabel.setLayoutY(20);
+		
+		p2LivesLabel.setFont(livesFont);
+		p2LivesLabel.setStyle("-fx-text-fill: #FFFFFF");
+		p2LivesLabel.setLayoutX(screenWidth - 400);
+		p2LivesLabel.setLayoutY(60);
 
 		// space ship initialization
 		Image spaceshipImage = new Image("file:images/Spaceship.png");
@@ -117,7 +125,7 @@ public class SpaceInvadersGUI extends Application {
 
 		pane.getChildren().add(scoreLabel);
 		pane.getChildren().add(scoreValueLabel);
-		pane.getChildren().add(livesLabel);
+		pane.getChildren().add(p1LivesLabel);
 
 		Scene scene = new Scene(basePane, screenWidth, screenHeight);
 
@@ -238,9 +246,9 @@ public class SpaceInvadersGUI extends Application {
 				// spaceship 2 stuff
 				if (spaceship2 != null) {
 					if (spaceship2.moveLeft)
-						spaceship2.setLayoutX(spaceship2.getLayoutX() - playerSpeed);
+						spaceship2.setLayoutX(spaceship2.getLayoutX() - spaceship2.getSpeed());
 					if (spaceship2.moveRight)
-						spaceship2.setLayoutX(spaceship2.getLayoutX() + playerSpeed);
+						spaceship2.setLayoutX(spaceship2.getLayoutX() + spaceship2.getSpeed());
 
 					plyrBullet = spaceship2.getBullet();
 					// Reset bullet position if out of bounds
@@ -364,6 +372,7 @@ public class SpaceInvadersGUI extends Application {
 		playerSelectionPane.getMultiplayerLabel().setOnMouseClicked(event -> {
 			basePane.getChildren().remove(playerSelectionPane);
 			basePane.getChildren().add(pane);
+			pane.getChildren().add(p2LivesLabel);
 			// add player 2
 			if (spaceship2 == null) {
 				spaceship2 = new SpaceShip(new Image("file:images/Spaceship.png"), "Balanced Ship", 5, 3);
@@ -374,6 +383,7 @@ public class SpaceInvadersGUI extends Application {
 			spaceship2.setPreserveRatio(true);
 			spaceship2.setLayoutX(screenWidth / 2 - spaceship1.getFitWidth() / 2);
 			spaceship2.setLayoutY(screenHeight * 0.85);
+			setLives();
 			// start the game
 			currTimeline.play();
 			timer.start();
@@ -422,10 +432,27 @@ public class SpaceInvadersGUI extends Application {
 			ImageView life = new ImageView(lifeImage);
 			life.setFitHeight(40);
 			life.setFitWidth(40);
-			life.setLayoutY(35);
+			life.setLayoutY(20);
 			life.setLayoutX((screenWidth - (screenWidth * 0.06)) - (50 * i));
 			pane.getChildren().add(life);
 			livesList.add(life);
+		}
+		
+		if (spaceship2 != null)
+		{
+			for (ImageView life : livesList2) {
+				pane.getChildren().remove(life);
+			}
+			livesList2.clear();
+			for (int i = 0; i < spaceship2.getLives(); i++) {
+				ImageView life = new ImageView(lifeImage);
+				life.setFitHeight(40);
+				life.setFitWidth(40);
+				life.setLayoutY(60);
+				life.setLayoutX((screenWidth - (screenWidth * 0.06)) - (50 * i));
+				pane.getChildren().add(life);
+				livesList2.add(life);
+			}
 		}
 	}
 
@@ -521,7 +548,7 @@ public class SpaceInvadersGUI extends Application {
 											if (allAliensDestroyed()) {
 												System.out.println("Increasing difficulty");
 												//increaseDifficulty(stage);
-												upgradeShip(stage);
+												upgradeShip(stage, "Player 1", spaceship1);
 												currTimeline.play();
 											}
 										}));
@@ -737,9 +764,12 @@ public class SpaceInvadersGUI extends Application {
 		ufo.explode();
 		ufo.setVisible(false);
 		ufo.setLayoutX(-ufo.getWidth());
+		gameOverPane = new GameOverPane();
+		registerMenuHandlers(stage);
+		
 	}
 	
-	private void upgradeShip(Stage stage) {
+	private void upgradeShip(Stage stage, String player, SpaceShip ship) {
 		SpaceShip currShip = new SpaceShip(spaceship1.getImage(), spaceship1.getName(), spaceship1.getSpeed(), spaceship1.getOriginalLives());
 		timer.stop();
 		currTimeline.stop();
@@ -748,7 +778,7 @@ public class SpaceInvadersGUI extends Application {
 			ufoMoveTimeline.stop();
 		basePane.getChildren().remove(pane);
 		basePane.getChildren().add(upgradeShipPane);
-		upgradeShipPane.setShipInfo(spaceship1);
+		upgradeShipPane.setShipInfo(ship, player);
 		upgradeShipPane.getConfirmLabel().setOnMouseClicked((event) -> {
 			basePane.getChildren().remove(upgradeShipPane);
 		    basePane.getChildren().add(pane);
@@ -762,6 +792,14 @@ public class SpaceInvadersGUI extends Application {
 		    	ufoMoveTimeline.play();
 		    increaseDifficulty(stage);
 		    setLives();
+		    if (player.equals("Player 1"))
+		    {
+		    	if (spaceship2 != null)
+		    	{
+		    		upgradeShip(stage, "Player 2", spaceship2);
+		    	}
+		    }
+		    
 		});
 		upgradeShipPane.getCancelLabel().setOnMouseClicked((event) -> {
 			basePane.getChildren().remove(upgradeShipPane);
