@@ -101,12 +101,12 @@ public class SpaceInvadersGUI extends Application {
 		Font livesFont = Font.loadFont("file:fonts/space_invaders.ttf", 25);
 		p1LivesLabel.setFont(livesFont);
 		p1LivesLabel.setStyle("-fx-text-fill: #FFFFFF");
-		p1LivesLabel.setLayoutX(screenWidth - 400);
+		p1LivesLabel.setLayoutX(screenWidth - 490);
 		p1LivesLabel.setLayoutY(20);
 		
 		p2LivesLabel.setFont(livesFont);
 		p2LivesLabel.setStyle("-fx-text-fill: #FFFFFF");
-		p2LivesLabel.setLayoutX(screenWidth - 400);
+		p2LivesLabel.setLayoutX(screenWidth - 490);
 		p2LivesLabel.setLayoutY(60);
 
 		// space ship initialization
