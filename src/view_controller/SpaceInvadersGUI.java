@@ -330,7 +330,7 @@ public class SpaceInvadersGUI extends Application {
 		devMenu.getChildren().add(nextLevelCheat);
 		nextLevelCheat.setOnMouseClicked(e -> {
 			alienGridPane.getChildren().clear();
-			upgradeShip(stage);
+			upgradeShip(stage, "Player 1", spaceship1);
 		});
 		Button dieButton = new Button("Die");
 		devMenu.getChildren().add(dieButton);
@@ -582,13 +582,17 @@ public class SpaceInvadersGUI extends Application {
 											aliens[finalI][finalJ] = null;
 											if (allAliensDestroyed()) {
 												System.out.println("Increasing difficulty");
-<<<<<<< HEAD
+
 												//increaseDifficulty(stage);
-												upgradeShip(stage, "Player 1", spaceship1);
+												if (!spaceship1.isDestroyed())
+												{
+													upgradeShip(stage, "Player 1", spaceship1);
+												}else {
+													upgradeShip(stage, "Player 2", spaceship2);
+												}
+												
 												currTimeline.play();
-=======
-												upgradeShip(stage);
->>>>>>> 6375f1d947d877cf06f3efcc535ec18e10819736
+
 											}
 										}));
 								explosionTimeline.setCycleCount(1);
@@ -825,10 +829,6 @@ public class SpaceInvadersGUI extends Application {
 		ufo.setLayoutX(-ufo.getWidth());
 		gameOverPane = new GameOverPane();
 		registerMenuHandlers(stage);
-<<<<<<< HEAD
-		
-=======
->>>>>>> 6375f1d947d877cf06f3efcc535ec18e10819736
 	}
 	
 	private void upgradeShip(Stage stage, String player, SpaceShip ship) {
@@ -853,7 +853,7 @@ public class SpaceInvadersGUI extends Application {
 		    setLives();
 		    if (player.equals("Player 1"))
 		    {
-		    	if (spaceship2 != null)
+		    	if (!spaceship2.isDestroyed())
 		    	{
 		    		upgradeShip(stage, "Player 2", spaceship2);
 		    	}
