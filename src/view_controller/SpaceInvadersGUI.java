@@ -797,6 +797,9 @@ public class SpaceInvadersGUI extends Application {
 		ufo.explode();
 		ufo.setVisible(false);
 		ufo.setLayoutX(-ufo.getWidth());
+		gameOverPane = new GameOverPane();
+		registerMenuHandlers(stage);
+		
 	}
 	
 	private void upgradeShip(Stage stage) {
