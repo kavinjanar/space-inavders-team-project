@@ -23,33 +23,49 @@ import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.RowConstraints;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.util.Duration;
 
+/**
+ * The {@code GameOverPane} class represents the pane displayed when a game is
+ * over. It extends {@code GridPane} and includes options to restart the game,
+ * return to the main menu, or quit. It also displays a leaderboard with high
+ * scores.
+ */
 public final class GameOverPane extends GridPane {
 	private Label gameOverLabel = new Label("Game Over");
 	private Label restartLabel = new Label("Restart");
 	private Label mainMenuLabel = new Label("Main Menu");
 	private Label quitLabel = new Label("Quit");
 	private Label leaderboardLabel = new Label("Leaderboard");
-    private GridPane leaderboardPane = new GridPane();
-    private int score;
-    private List<LeaderboardEntry> leaderboardEntries;
+	private GridPane leaderboardPane = new GridPane();
+	private int score;
+	private List<LeaderboardEntry> leaderboardEntries;
 
-    public GameOverPane() {
-        initializeGUI();
-        registerHandlers();
-        flashGameOverLabel();
-        loadAndUpdateLeaderboard();
-    }
-    
-    
-    public void setScore(int s) {
-        this.score = s;
+	/**
+	 * Constructor for the GameOverPane. Initializes the GUI, registers event
+	 * handlers, flashes the game over label, and loads the leaderboard.
+	 */
+	public GameOverPane() {
+		initializeGUI();
+		registerHandlers();
+		flashGameOverLabel();
+		loadAndUpdateLeaderboard();
+	}
+
+	/**
+	 * Sets the score for the current game session.
+	 * 
+	 * @param s The final score achieved in the game.
+	 */
+	public void setScore(int s) {
+		this.score = s;
 //        loadAndUpdateLeaderboard();
-    }
+	}
 
+	/**
+	 * Initializes the graphical user interface of the game over pane.
+	 */
 	private void initializeGUI() {
 		Font spaceFont = Font.loadFont("file:fonts/space_invaders.ttf", 44);
 		Font spaceFontLarge = Font.loadFont("file:fonts/space_invaders.ttf", 72);
@@ -62,14 +78,14 @@ public final class GameOverPane extends GridPane {
 		mainMenuLabel.setStyle("-fx-text-fill: #00ff5a");
 		quitLabel.setFont(spaceFont);
 		quitLabel.setStyle("-fx-text-fill: #00ff5a");
-		
-		ColumnConstraints leftColConstraints = new ColumnConstraints();
-        leftColConstraints.setPercentWidth(50);
 
-        ColumnConstraints rightColConstraints = new ColumnConstraints();
-        rightColConstraints.setPercentWidth(50); // column for leaderboard
-        
-        this.getColumnConstraints().addAll(leftColConstraints, rightColConstraints);
+		ColumnConstraints leftColConstraints = new ColumnConstraints();
+		leftColConstraints.setPercentWidth(50);
+
+		ColumnConstraints rightColConstraints = new ColumnConstraints();
+		rightColConstraints.setPercentWidth(50); // column for leaderboard
+
+		this.getColumnConstraints().addAll(leftColConstraints, rightColConstraints);
 
 		GridPane.setHalignment(gameOverLabel, HPos.CENTER);
 		GridPane.setHalignment(restartLabel, HPos.CENTER);
@@ -81,7 +97,7 @@ public final class GameOverPane extends GridPane {
 		ImageView logoImageView = new ImageView(logo);
 
 		GridPane.setHalignment(logoImageView, HPos.CENTER);
-		
+
 		ColumnConstraints col1Constraints = new ColumnConstraints();
 		col1Constraints.setPercentWidth(100);
 
@@ -98,179 +114,214 @@ public final class GameOverPane extends GridPane {
 		this.getRowConstraints().addAll(row1Constraints);
 		this.add(leaderboardPane, 1, 0, 1, 5);
 	}
-	
 
-	
+	/**
+	 * Loads and updates the leaderboard display.
+	 */
 	private void loadAndUpdateLeaderboard() {
-        // Set up leaderboard label with custom font and style
-        Font spaceFontLarge = Font.loadFont("file:fonts/space_invaders.ttf", 72);
-        leaderboardLabel.setFont(spaceFontLarge);
-        leaderboardLabel.setStyle("-fx-text-fill: #FFFFFF");
-        GridPane.setHalignment(leaderboardLabel, HPos.CENTER);
-        Insets leaderboardPadding = new Insets(20, 0, 0, 0); 
-        GridPane.setMargin(leaderboardLabel, leaderboardPadding);
-        leaderboardPane.add(leaderboardLabel, 0, 0);
+		// Set up leaderboard label with custom font and style
+		Font spaceFontLarge = Font.loadFont("file:fonts/space_invaders.ttf", 72);
+		leaderboardLabel.setFont(spaceFontLarge);
+		leaderboardLabel.setStyle("-fx-text-fill: #FFFFFF");
+		GridPane.setHalignment(leaderboardLabel, HPos.CENTER);
+		Insets leaderboardPadding = new Insets(20, 0, 0, 0);
+		GridPane.setMargin(leaderboardLabel, leaderboardPadding);
+		leaderboardPane.add(leaderboardLabel, 0, 0);
 
-        // Load and display leaderboard entries
-        leaderboardEntries = LeaderboardManager.loadLeaderboard("leaderboard.dat");
-        updateLeaderboardDisplay();
-        
-        if (qualifiesForLeaderboard(score)) {
-            promptForLeaderboardEntry();
-        }
-    }
-	
-	private boolean qualifiesForLeaderboard(int score) {
-        // Check if the score is higher than the lowest score in the leaderboard
-        // Or if the leaderboard has less than 8 entries
-        if (leaderboardEntries.size() < 8) {
-            return true;
-        }
-        return score >= leaderboardEntries.get(7).getScore();
-    }
+		// Load and display leaderboard entries
+		leaderboardEntries = LeaderboardManager.loadLeaderboard("leaderboard.dat");
+		updateLeaderboardDisplay();
 
-	private void promptForLeaderboardEntry() {
-	    // Load the font
-	    Font spaceFont = Font.loadFont("file:fonts/space_invaders.ttf", 44);
-
-	    // Create the text field for name entry
-	    TextField nameInput = new TextField();
-	    nameInput.setFont(spaceFont); // Set the custom font
-	    nameInput.setStyle(
-	        "-fx-text-fill: yellow; " + // Set the text color to yellow
-	        "-fx-background-color: transparent; " + // Set the background to transparent
-	        "-fx-prompt-text-fill: #FFFFFF; " + // Set the prompt text color to white
-	        "-fx-background-insets: 0; " + // No padding within the background
-	        "-fx-border-color: yellow; " + // Set border color if needed
-	        "-fx-border-width: 2; " + // Set border width if needed
-	        "-fx-border-insets: 0; " + // No padding within the border
-	        "-fx-border-radius: 0; " + // Set to '0' to have no rounded corners
-	        "-fx-background-radius: 0;" // Set to '0' to have no rounded corners
-	    );
-
-	    nameInput.setPromptText("Enter Name");
-
-	    // Limit the number of characters to 10
-	    UnaryOperator<TextFormatter.Change> characterLimitFilter = change -> {
-	        if (change.getControlNewText().length() <= 10) {
-	            return change; // Allow the change
-	        }
-	        return null; // Prevent the change
-	    };
-	    nameInput.setTextFormatter(new TextFormatter<>(characterLimitFilter));
-
-	    nameInput.setOnAction(event -> {
-	        String playerName = nameInput.getText();
-	        if (playerName != null && !playerName.trim().isEmpty()) {
-	            addScoreToLeaderboard(playerName, score);
-	        }
-	    });
-
-	    // Add the text field to the leaderboardPane below the label
-	    leaderboardPane.add(nameInput, 0, leaderboardEntries.size() + 1); // Adjust the row index as needed
+		if (qualifiesForLeaderboard(score)) {
+			promptForLeaderboardEntry();
+		}
 	}
 
+	/**
+	 * Checks if the current score qualifies for the leaderboard.
+	 * 
+	 * @param score The score to check.
+	 * @return {@code true} if the score qualifies for the leaderboard,
+	 *         {@code false} otherwise.
+	 */
+	private boolean qualifiesForLeaderboard(int score) {
+		// Check if the score is higher than the lowest score in the leaderboard
+		// Or if the leaderboard has less than 8 entries
+		if (leaderboardEntries.size() < 8) {
+			return true;
+		}
+		return score >= leaderboardEntries.get(7).getScore();
+	}
 
-    private void addScoreToLeaderboard(String name, int score) {
-        // Add new score to leaderboard
-        leaderboardEntries.add(new LeaderboardEntry(name, score));
+	/**
+	 * Prompts the player to enter their name for the leaderboard entry.
+	 */
+	private void promptForLeaderboardEntry() {
+		// Load the font
+		Font spaceFont = Font.loadFont("file:fonts/space_invaders.ttf", 44);
 
-        // Sort the leaderboard in descending order of scores
-        Collections.sort(leaderboardEntries, new Comparator<LeaderboardEntry>() {
-            @Override
-            public int compare(LeaderboardEntry entry1, LeaderboardEntry entry2) {
-                return Integer.compare(entry2.getScore(), entry1.getScore()); // Note the order of entry2 and entry1
-            }
-        });
+		// Create the text field for name entry
+		TextField nameInput = new TextField();
+		nameInput.setFont(spaceFont); // Set the custom font
+		nameInput.setStyle("-fx-text-fill: yellow; " + // Set the text color to yellow
+				"-fx-background-color: transparent; " + // Set the background to transparent
+				"-fx-prompt-text-fill: #FFFFFF; " + // Set the prompt text color to white
+				"-fx-background-insets: 0; " + // No padding within the background
+				"-fx-border-color: yellow; " + // Set border color if needed
+				"-fx-border-width: 2; " + // Set border width if needed
+				"-fx-border-insets: 0; " + // No padding within the border
+				"-fx-border-radius: 0; " + // Set to '0' to have no rounded corners
+				"-fx-background-radius: 0;" // Set to '0' to have no rounded corners
+		);
 
-        // If the leaderboard has more than 8 entries, remove the lowest one
-        if (leaderboardEntries.size() > 8) {
-            leaderboardEntries.remove(8); // Remove the 11th entry (index 8)
-        }
+		nameInput.setPromptText("Enter Name");
 
-        // Save the sorted leaderboard
-        LeaderboardManager.saveLeaderboard(leaderboardEntries, "leaderboard.dat");
-        updateLeaderboardDisplay();
-    }
+		// Limit the number of characters to 10
+		UnaryOperator<TextFormatter.Change> characterLimitFilter = change -> {
+			if (change.getControlNewText().length() <= 10) {
+				return change; // Allow the change
+			}
+			return null; // Prevent the change
+		};
+		nameInput.setTextFormatter(new TextFormatter<>(characterLimitFilter));
 
-    private void updateLeaderboardDisplay() {
-        leaderboardPane.getChildren().clear(); // Clear existing entries
-        leaderboardPane.add(leaderboardLabel, 0, 0, 2, 1); // Span 2 columns for the leaderboard title
+		nameInput.setOnAction(event -> {
+			String playerName = nameInput.getText();
+			if (playerName != null && !playerName.trim().isEmpty()) {
+				addScoreToLeaderboard(playerName, score);
+			}
+		});
 
-        // Load the font
-        Font spaceFont = Font.loadFont("file:fonts/space_invaders.ttf", 44);
+		// Add the text field to the leaderboardPane below the label
+		leaderboardPane.add(nameInput, 0, leaderboardEntries.size() + 1); // Adjust the row index as needed
+	}
 
-        // Create labels for each leaderboard entry with the specified font and color
-        int entriesToShow = Math.min(leaderboardEntries.size(), 8);
-        for (int i = 0; i < entriesToShow; i++) {
-            LeaderboardEntry entry = leaderboardEntries.get(i);
+	/**
+	 * Adds the player's score to the leaderboard.
+	 * 
+	 * @param name  The name of the player.
+	 * @param score The score achieved by the player.
+	 */
+	private void addScoreToLeaderboard(String name, int score) {
+		// Add new score to leaderboard
+		leaderboardEntries.add(new LeaderboardEntry(name, score));
 
-            // Name label
-            Label nameLabel = new Label(entry.getName());
-            nameLabel.setFont(spaceFont);
-            nameLabel.setStyle("-fx-text-fill: yellow");
-            GridPane.setHalignment(nameLabel, HPos.LEFT); // Align name to the left
+		// Sort the leaderboard in descending order of scores
+		Collections.sort(leaderboardEntries, new Comparator<LeaderboardEntry>() {
+			@Override
+			public int compare(LeaderboardEntry entry1, LeaderboardEntry entry2) {
+				return Integer.compare(entry2.getScore(), entry1.getScore()); // Note the order of entry2 and entry1
+			}
+		});
 
-            // Score label
-            Label scoreLabel = new Label(String.format("%d", entry.getScore()));
-            scoreLabel.setFont(spaceFont);
-            scoreLabel.setStyle("-fx-text-fill: yellow");
-            GridPane.setHalignment(scoreLabel, HPos.RIGHT); // Align score to the right
+		// If the leaderboard has more than 8 entries, remove the lowest one
+		if (leaderboardEntries.size() > 8) {
+			leaderboardEntries.remove(8); // Remove the 11th entry (index 8)
+		}
 
-            // Add name and score labels to the grid pane
-            leaderboardPane.add(nameLabel, 0, i + 1); // Add name label in the first column
-            leaderboardPane.add(scoreLabel, 1, i + 1); // Add score label in the second column
-        }
+		// Save the sorted leaderboard
+		LeaderboardManager.saveLeaderboard(leaderboardEntries, "leaderboard.dat");
+		updateLeaderboardDisplay();
+	}
 
-        // Adjust the column constraints if necessary
-        ColumnConstraints nameCol = new ColumnConstraints();
-        nameCol.setHgrow(Priority.ALWAYS); // Allow name column to grow
-        nameCol.setHalignment(HPos.LEFT); // Align content to the left
+	/**
+	 * Updates the display of the leaderboard on the GUI.
+	 */
+	private void updateLeaderboardDisplay() {
+		leaderboardPane.getChildren().clear(); // Clear existing entries
+		leaderboardPane.add(leaderboardLabel, 0, 0, 2, 1); // Span 2 columns for the leaderboard title
 
-        ColumnConstraints scoreCol = new ColumnConstraints();
-        scoreCol.setHalignment(HPos.RIGHT); // Align content to the right
+		// Load the font
+		Font spaceFont = Font.loadFont("file:fonts/space_invaders.ttf", 44);
 
-        // Set the column constraints on the leaderboardPane
-        leaderboardPane.getColumnConstraints().setAll(nameCol, scoreCol);
-    }
+		// Create labels for each leaderboard entry with the specified font and color
+		int entriesToShow = Math.min(leaderboardEntries.size(), 8);
+		for (int i = 0; i < entriesToShow; i++) {
+			LeaderboardEntry entry = leaderboardEntries.get(i);
 
+			// Name label
+			Label nameLabel = new Label(entry.getName());
+			nameLabel.setFont(spaceFont);
+			nameLabel.setStyle("-fx-text-fill: yellow");
+			GridPane.setHalignment(nameLabel, HPos.LEFT); // Align name to the left
 
-	
+			// Score label
+			Label scoreLabel = new Label(String.format("%d", entry.getScore()));
+			scoreLabel.setFont(spaceFont);
+			scoreLabel.setStyle("-fx-text-fill: yellow");
+			GridPane.setHalignment(scoreLabel, HPos.RIGHT); // Align score to the right
 
+			// Add name and score labels to the grid pane
+			leaderboardPane.add(nameLabel, 0, i + 1); // Add name label in the first column
+			leaderboardPane.add(scoreLabel, 1, i + 1); // Add score label in the second column
+		}
+
+		// Adjust the column constraints if necessary
+		ColumnConstraints nameCol = new ColumnConstraints();
+		nameCol.setHgrow(Priority.ALWAYS); // Allow name column to grow
+		nameCol.setHalignment(HPos.LEFT); // Align content to the left
+
+		ColumnConstraints scoreCol = new ColumnConstraints();
+		scoreCol.setHalignment(HPos.RIGHT); // Align content to the right
+
+		// Set the column constraints on the leaderboardPane
+		leaderboardPane.getColumnConstraints().setAll(nameCol, scoreCol);
+	}
+
+	/**
+	 * Returns the label for restarting the game.
+	 * 
+	 * @return The restart label.
+	 */
 	public Label getRestartLabel() {
 		return restartLabel;
 	}
 
+	/**
+	 * Returns the label for navigating to the main menu.
+	 * 
+	 * @return The main menu label.
+	 */
 	public Label getMainMenuLabel() {
 		return mainMenuLabel;
 	}
 
+	/**
+	 * Returns the label for quitting the game.
+	 * 
+	 * @return The quit label.
+	 */
 	public Label getQuitLabel() {
 		return quitLabel;
 	}
-	
-	private void flashGameOverLabel() {
-	    Timeline timeline = new Timeline(
-	            new KeyFrame(Duration.seconds(0.75), new EventHandler<ActionEvent>() {
-	                private boolean white = true;
 
-	                @Override
-	                public void handle(ActionEvent event) {
-	                    if (white) {
-	                        gameOverLabel.setStyle("-fx-text-fill: #000000");
-	                    } else {
-	                        gameOverLabel.setStyle("-fx-text-fill: #FFFFFF");
-	                    }
-	                    
-	                    white = !white;
-	                }
-	            })
-	    );
-	    
-	    timeline.setCycleCount(Timeline.INDEFINITE);
-	    timeline.play();
+	/**
+	 * Creates an animation effect for the Game Over label that flashes between two
+	 * colors.
+	 */
+	private void flashGameOverLabel() {
+		Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(0.75), new EventHandler<ActionEvent>() {
+			private boolean white = true;
+
+			@Override
+			public void handle(ActionEvent event) {
+				if (white) {
+					gameOverLabel.setStyle("-fx-text-fill: #000000");
+				} else {
+					gameOverLabel.setStyle("-fx-text-fill: #FFFFFF");
+				}
+
+				white = !white;
+			}
+		}));
+
+		timeline.setCycleCount(Timeline.INDEFINITE);
+		timeline.play();
 	}
 
+	/**
+	 * Registers mouse event handlers for labels in the Game Over pane.
+	 */
 	private void registerHandlers() {
 		restartLabel.setOnMouseEntered(event -> {
 			restartLabel.setStyle("-fx-text-fill: #79FFA8");
@@ -291,6 +342,5 @@ public final class GameOverPane extends GridPane {
 			quitLabel.setStyle("-fx-text-fill: #00ff5a");
 		});
 	}
-	
-	
+
 }
