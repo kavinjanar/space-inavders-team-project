@@ -126,7 +126,7 @@ public final class GameOverPane extends GridPane {
         if (leaderboardEntries.size() < 8) {
             return true;
         }
-        return score > leaderboardEntries.get(7).getScore();
+        return score >= leaderboardEntries.get(7).getScore();
     }
 
 	private void promptForLeaderboardEntry() {
