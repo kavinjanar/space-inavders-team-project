@@ -4,6 +4,9 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 
+/**
+ * Constructs the UFO object that floats across the game screen at certain intervals
+ */
 public class UFO extends Pane {
 	protected ImageView imageView;
 	protected Image image1;
@@ -24,11 +27,18 @@ public class UFO extends Pane {
         //this.imageView.setPreserveRatio(true);
         getChildren().add(this.imageView);
     }
-        
+
+    /**
+     * Checks if the UFO has not been destroyed
+     * @return - a Boolean that indicates if the UFO has not been destroyed
+     */
     public boolean isAlive() {
         return isAlive;
     }
     
+    /**
+     * Resets the UFO
+     */
     public void revive() {
     	this.imageView.setImage(image1);
     	isAlive = true;

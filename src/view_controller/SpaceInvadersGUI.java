@@ -81,6 +81,9 @@ public class SpaceInvadersGUI extends Application {
 		launch(args);
 	}
 
+	/**
+	 * Starts the main Space Invaders Game screen
+	 */
 	@Override
 	public void start(Stage stage) throws Exception {
 		pane.setStyle("-fx-background-color: black;");
@@ -370,6 +373,10 @@ public class SpaceInvadersGUI extends Application {
 		});
 	}
 
+	/**
+	 * Registers the handlers for all the buttons in the various menus. Main navigation algorithm
+	 * @param stage - the stage of the GUI
+	 */
 	private void registerMenuHandlers(Stage stage) {
 		mainMenu.getStartGameLabel().setOnMouseClicked(event -> {
 			basePane.getChildren().remove(mainMenu);
@@ -460,6 +467,10 @@ public class SpaceInvadersGUI extends Application {
 		});
 	}
 
+	/**
+	 * Sets the lives counter on the top right of the game for both
+	 * single and multiplayer
+	 */
 	private void setLives() {
 		Image lifeImage = new Image("file:images/Life.png");
 
@@ -495,6 +506,12 @@ public class SpaceInvadersGUI extends Application {
 		}
 	}
 
+	/**
+	 * Algorithm that deterimines what happens when a Bullet hits anything in the game
+	 * @param bullet - the Bullet object that needs to be checked
+	 * @param stage - the stage of the GUI
+	 * @return
+	 */
 	private boolean bulletHitSomething(Bullet bullet, Stage stage) {
 		for (Shield shield : shields) {
 			double shieldX = shield.getLayoutX();
@@ -622,10 +639,18 @@ public class SpaceInvadersGUI extends Application {
 		return false;
 	}
 
+	/**
+	 * Checks if all aliens are destroyed
+	 * @return - a Boolean that indicates if all aliens are destroyed
+	 */
 	private boolean allAliensDestroyed() {
 		return alienGridPane.getChildren().isEmpty();
 	}
 
+	/**
+	 * Increments the score earned
+	 * @param increment - the amount that the score must be incremented
+	 */
 	private void incrementScore(int increment) {
 		System.out.print("New score = " + score + " + " + increment);
 		score += increment;
@@ -633,6 +658,9 @@ public class SpaceInvadersGUI extends Application {
 		scoreValueLabel.setText("" + score);
 	}
 	
+	/**
+	 * Adds the shields to the game screen
+	 */
 	private void addShields() {
 		// Add shields
 		for (int y = (int) (screenHeight * 0.65); y <= (int) (screenHeight * 0.70); y += (int) (screenHeight * 0.05)) {
@@ -653,7 +681,7 @@ public class SpaceInvadersGUI extends Application {
 	/**
 	 * sets up the grid of aliens
 	 * 
-	 * @param stage
+	 * @param stage - the stage of the GUI
 	 */
 	private void alienGrid(Stage stage) {
 		int rows = 5;
@@ -706,10 +734,10 @@ public class SpaceInvadersGUI extends Application {
 	}
 
 	/**
-	 * moves the grid of aliens left and right TODO: make it move up and down as
+	 * moves the grid of aliens left and right
 	 * well
 	 * 
-	 * @param stage
+	 * @param stage - the stage of the GUI
 	 */
 	private Timeline moveAlienGrid(Stage stage) {
 		final double alienDropDownDistance = 20;
@@ -755,6 +783,10 @@ public class SpaceInvadersGUI extends Application {
 		return moveAliensTimeline;
 	}
 	
+	/**
+	 * Resumes the game after the game is stopped when paused
+	 * @param stage - the stage of the current GUI
+	 */
 	private void resumeGame(Stage stage) {
 		currTimeline.play();
 		timer.start();
@@ -763,6 +795,10 @@ public class SpaceInvadersGUI extends Application {
 			ufoMoveTimeline.play();
 	}
 	
+	/**
+	 * Pauses the game by stopping all timelines
+	 * @param stage - the current stage of the GUI
+	 */
 	private void pauseGame(Stage stage) {
 		currTimeline.stop();
 		timer.stop();
@@ -771,6 +807,10 @@ public class SpaceInvadersGUI extends Application {
 			ufoMoveTimeline.pause();
 	}
 
+	/**
+	 * Ends the game and displays the game over window
+	 * @param stage - the stage of the GUI
+	 */
 	private void endGame(Stage stage) {
 		timer.stop();
 		currTimeline.stop();
@@ -782,6 +822,10 @@ public class SpaceInvadersGUI extends Application {
 		basePane.getChildren().add(gameOverPane);
 	}
 	
+	/**
+	 * Resets the entire game if a player chooses to restart the game
+	 * @param stage - the current stage of the GUI
+	 */
 	private void resetGame(Stage stage) {
 		pauseGame(stage);
 		score = 0;
@@ -831,6 +875,12 @@ public class SpaceInvadersGUI extends Application {
 		registerMenuHandlers(stage);
 	}
 	
+	/**
+	 * Stops the game and prompts the Upgrade Ship Pane to upgrade a ship after the completion of a round
+	 * @param stage - the current stage of the GUI
+	 * @param player - a String that indicates whether player 1 or 2 needs their ship upgraded
+	 * @param ship - the SpaceShip object that needs to be upgraded
+	 */
 	private void upgradeShip(Stage stage, String player, SpaceShip ship) {
 		SpaceShip currShip = new SpaceShip(spaceship1.getImage(), spaceship1.getName(), spaceship1.getSpeed(), spaceship1.getOriginalLives());
 		pauseGame(stage);
@@ -896,6 +946,10 @@ public class SpaceInvadersGUI extends Application {
 		});
 	}
 
+	/**
+	 * Increases the difficulty of the game by a set factor
+	 * @param stage - the stage of the GUI
+	 */
 	private void increaseDifficulty(Stage stage) {
 		System.out.println("entering method");
 		System.out.println("New update duration: " + pauseDuration);
@@ -942,6 +996,9 @@ public class SpaceInvadersGUI extends Application {
 		currTimeline.getKeyFrames().add(bulletKeyFrame);
 	}
 
+	/**
+	 * Sets up and moves the big red UFO across the screen during certain time intervals
+	 */
 	private void setupUFOMovement() {
 	    ufoMovement = new Timeline(new KeyFrame(Duration.seconds(10), e -> {
 	        if (randGen.nextBoolean()) { // Randomly decide to show the UFO
