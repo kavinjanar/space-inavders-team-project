@@ -41,7 +41,6 @@ public class SpaceInvadersGUI extends Application {
 	private StackPane basePane = new StackPane();
 	private TutorialPane tutorialPane = new TutorialPane();
 	private UpgradeShipPane upgradeShipPane = new UpgradeShipPane();
-	private OptionsPane optionsPane = new OptionsPane();
 	private GameOverPane gameOverPane = new GameOverPane();
 	private PlayerSelectionPane playerSelectionPane = new PlayerSelectionPane();
 	private PauseMenuPane pauseMenuPane = new PauseMenuPane();
@@ -374,10 +373,6 @@ public class SpaceInvadersGUI extends Application {
 			basePane.getChildren().remove(mainMenu);
 			basePane.getChildren().add(tutorialPane);
 		});
-		mainMenu.getOptionsLabel().setOnMouseClicked(event -> {
-			basePane.getChildren().remove(mainMenu);
-			basePane.getChildren().add(optionsPane);
-		});
 		mainMenu.getQuitLabel().setOnMouseClicked(event -> {
 			stage.close();
 		});
@@ -418,10 +413,6 @@ public class SpaceInvadersGUI extends Application {
 		});
 		tutorialPane.getBackLabel().setOnMouseClicked(event -> {
 			basePane.getChildren().remove(tutorialPane);
-			basePane.getChildren().add(mainMenu);
-		});
-		optionsPane.getBackLabel().setOnMouseClicked(event -> {
-			basePane.getChildren().remove(optionsPane);
 			basePane.getChildren().add(mainMenu);
 		});
 		gameOverPane.getRestartLabel().setOnMouseClicked(event -> {
