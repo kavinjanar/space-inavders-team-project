@@ -41,12 +41,13 @@ public final class GameOverPane extends GridPane {
         initializeGUI();
         registerHandlers();
         flashGameOverLabel();
-//        setupLeaderboard();
         loadAndUpdateLeaderboard();
     }
     
+    
     public void setScore(int s) {
         this.score = s;
+//        loadAndUpdateLeaderboard();
     }
 
 	private void initializeGUI() {
