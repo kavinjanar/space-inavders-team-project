@@ -803,7 +803,6 @@ public class SpaceInvadersGUI extends Application {
 			pane.getChildren().remove(spaceship1.getBullet().getImageView());
 			spaceship1.deleteBullet();
 		}
-		setLives();
 		if (spaceship2 != null) {
 			spaceship2.setLayoutX((screenWidth - spaceship2.getFitWidth()) / 2.0);
 			spaceship2.changeToBalancedShip();
@@ -816,6 +815,7 @@ public class SpaceInvadersGUI extends Application {
 				spaceship2.deleteBullet();
 			}
 		}
+		setLives();
 		
 		for (Bullet bullet : enemyBullets) {
 			pane.getChildren().remove(bullet.getImageView());
@@ -851,9 +851,10 @@ public class SpaceInvadersGUI extends Application {
 		    increaseDifficulty(stage);
 		    currTimeline.play(); // Start the new timeline for alien movement
 		    setLives();
+		    upgradeShipPane = new UpgradeShipPane();
 		    if (player.equals("Player 1"))
 		    {
-		    	if (!spaceship2.isDestroyed())
+		    	if (spaceship2 != null && !spaceship2.isDestroyed())
 		    	{
 		    		upgradeShip(stage, "Player 2", spaceship2);
 		    	}
@@ -885,6 +886,8 @@ public class SpaceInvadersGUI extends Application {
 		    increaseDifficulty(stage);
 		    currTimeline.play(); // Start the new timeline for alien movement
 			setLives();
+			
+			upgradeShipPane = new UpgradeShipPane();
 		});
 	}
 

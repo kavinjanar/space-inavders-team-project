@@ -183,6 +183,18 @@ public final class UpgradeShipPane extends GridPane {
 		return speedLabel;
 	}
 	
+	public Label getNameLabel2() {
+		return nameLabel2;
+	}
+
+	public Label getLivesLabel2() {
+		return livesLabel2;
+	}
+
+	public Label getSpeedLabel2() {
+		return speedLabel2;
+	}
+	
 	public Label getConfirmLabel()
 	{
 		return confirmLabel;
@@ -193,20 +205,20 @@ public final class UpgradeShipPane extends GridPane {
 	}
 
 	private void registerHandlers() {
-		nameLabel.setOnMouseEntered(event -> {
+		/* nameLabel.setOnMouseEntered(event -> {
 			nameLabel.setStyle("-fx-text-fill: #79FFA8");
 		});
 		nameLabel.setOnMouseExited(event -> {
 			nameLabel.setStyle("-fx-text-fill: #00ff5a");
-		});
+		}); */
 		nameLabel.setOnMouseClicked(new ShipSelectionHandler());
 		
-		nameLabel2.setOnMouseEntered(event -> {
+		/* nameLabel2.setOnMouseEntered(event -> {
 			nameLabel2.setStyle("-fx-text-fill: #79FFA8");
 		});
 		nameLabel2.setOnMouseExited(event -> {
 			nameLabel2.setStyle("-fx-text-fill: #00ff5a");
-		});
+		}); */
 		nameLabel2.setOnMouseClicked(new ShipSelectionHandler());
 
 		confirmLabel.setOnMouseEntered(event -> {
@@ -231,6 +243,11 @@ public final class UpgradeShipPane extends GridPane {
 		public void handle(MouseEvent arg0) {
 			// TODO Auto-generated method stub
 			Label chosenShip = (Label) arg0.getSource();
+			chosenShip.setStyle("-fx-text-fill: #79FFA8");
+			if (chosenShip.equals(nameLabel))
+				nameLabel2.setStyle("-fx-text-fill: #00ff5a");
+			else if (chosenShip.equals(nameLabel2))
+				nameLabel.setStyle("-fx-text-fill: #00ff5a");
 			if (chosenShip.getText().equals("Name: Speedy Ship"))
 			{
 				spaceShip.changeToSpeedyShip();
