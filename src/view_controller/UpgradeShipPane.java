@@ -189,14 +189,26 @@ public final class UpgradeShipPane extends GridPane {
 		nameLabel.setOnMouseClicked(new ShipSelectionHandler());
 		
 		nameLabel2.setOnMouseEntered(event -> {
-			nameLabel.setStyle("-fx-text-fill: #79FFA8");
+			nameLabel2.setStyle("-fx-text-fill: #79FFA8");
 		});
 		nameLabel2.setOnMouseExited(event -> {
-			nameLabel.setStyle("-fx-text-fill: #00ff5a");
+			nameLabel2.setStyle("-fx-text-fill: #00ff5a");
 		});
-		
 		nameLabel2.setOnMouseClicked(new ShipSelectionHandler());
 		
+		confirmLabel.setOnMouseEntered(event -> {
+			confirmLabel.setStyle("-fx-text-fill: #79FFA8");
+		});
+		confirmLabel.setOnMouseExited(event -> {
+			confirmLabel.setStyle("-fx-text-fill: #00ff5a");
+		});
+		
+		cancelLabel.setOnMouseEntered(event -> {
+			cancelLabel.setStyle("-fx-text-fill: #79FFA8");
+		});
+		cancelLabel.setOnMouseExited(event -> {
+			cancelLabel.setStyle("-fx-text-fill: #00ff5a");
+		});
 	}
 	
 	public class ShipSelectionHandler implements EventHandler<MouseEvent>{
