@@ -68,7 +68,7 @@ public class SpaceShip extends ImageView {
 	
 	public void changeToBulkyShip()
 	{
-		name = "Bulky Ship";
+		name = "Chunky Ship";
 		speed = 2;
 		lives = 5;
 		originalLives = 5;

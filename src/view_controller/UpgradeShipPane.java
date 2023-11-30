@@ -38,66 +38,74 @@ public final class UpgradeShipPane extends GridPane {
 	}
 	
 	private void initializeGUI() {
-		Font spaceFont = Font.loadFont("file:fonts/space_invaders.ttf", 36);
-		Font spaceFontLarge = Font.loadFont("file:fonts/space_invaders.ttf", 72);
+	    Font spaceFont = Font.loadFont("file:fonts/space_invaders.ttf", 36);
+	    Font spaceFontLarge = Font.loadFont("file:fonts/space_invaders.ttf", 72);
 
-		promptLabel.setFont(spaceFontLarge);
-		promptLabel.setStyle("-fx-text-fill: #FFFFFF");
-		nameLabel.setFont(spaceFont);
-		nameLabel.setStyle("-fx-text-fill: #00ff5a");
-		livesLabel.setFont(spaceFont);
-		livesLabel.setStyle("-fx-text-fill: #00ff5a");
-		speedLabel.setFont(spaceFont);
-		speedLabel.setStyle("-fx-text-fill: #00ff5a");
-		nameLabel2.setFont(spaceFont);
-		nameLabel2.setStyle("-fx-text-fill: #00ff5a");
-		livesLabel2.setFont(spaceFont);
-		livesLabel2.setStyle("-fx-text-fill: #00ff5a");
-		speedLabel2.setFont(spaceFont);
-		speedLabel2.setStyle("-fx-text-fill: #00ff5a");
-		
-		confirmLabel.setFont(spaceFont);
-		confirmLabel.setStyle("-fx-text-fill: #00ff5a");
-		
-		cancelLabel.setFont(spaceFont);
-		cancelLabel.setStyle("-fx-text-fill: #00ff5a");
+	    // Set fonts and styles for labels
+	    promptLabel.setFont(spaceFontLarge);
+	    promptLabel.setStyle("-fx-text-fill: #FFFFFF");
+	    nameLabel.setFont(spaceFont);
+	    nameLabel.setStyle("-fx-text-fill: #00ff5a");
+	    livesLabel.setFont(spaceFont);
+	    livesLabel.setStyle("-fx-text-fill: #00ff5a");
+	    speedLabel.setFont(spaceFont);
+	    speedLabel.setStyle("-fx-text-fill: #00ff5a");
+	    nameLabel2.setFont(spaceFont);
+	    nameLabel2.setStyle("-fx-text-fill: #00ff5a");
+	    livesLabel2.setFont(spaceFont);
+	    livesLabel2.setStyle("-fx-text-fill: #00ff5a");
+	    speedLabel2.setFont(spaceFont);
+	    speedLabel2.setStyle("-fx-text-fill: #00ff5a");
+	    confirmLabel.setFont(spaceFont);
+	    confirmLabel.setStyle("-fx-text-fill: #00ff5a");
+	    cancelLabel.setFont(spaceFont);
+	    cancelLabel.setStyle("-fx-text-fill: #00ff5a");
 
-		GridPane.setHalignment(promptLabel, HPos.CENTER);
-		GridPane.setHalignment(nameLabel, HPos.LEFT);
-		GridPane.setHalignment(livesLabel, HPos.LEFT);
-		GridPane.setHalignment(speedLabel, HPos.LEFT);
-		GridPane.setHalignment(nameLabel2, HPos.RIGHT);
-		GridPane.setHalignment(livesLabel2, HPos.RIGHT);
-		GridPane.setHalignment(speedLabel2, HPos.RIGHT);
-		GridPane.setHalignment(confirmLabel, HPos.CENTER);
-		GridPane.setHalignment(cancelLabel, HPos.CENTER);
-		GridPane.setMargin(promptLabel, new Insets(-74, 0, 30, 0));
+	    // Set alignments for labels
+	    GridPane.setHalignment(promptLabel, HPos.CENTER);
+	    GridPane.setHalignment(nameLabel, HPos.CENTER);
+	    GridPane.setHalignment(livesLabel, HPos.CENTER);
+	    GridPane.setHalignment(speedLabel, HPos.CENTER);
+	    GridPane.setHalignment(nameLabel2, HPos.CENTER);
+	    GridPane.setHalignment(livesLabel2, HPos.CENTER);
+	    GridPane.setHalignment(speedLabel2, HPos.CENTER);
+	    GridPane.setHalignment(confirmLabel, HPos.CENTER);
+	    GridPane.setHalignment(cancelLabel, HPos.CENTER);
 
-		ColumnConstraints col1Constraints = new ColumnConstraints();
-		col1Constraints.setPercentWidth(100);
+	    // Set margins for labels
+	    GridPane.setMargin(promptLabel, new Insets(20, 0, 20, 0)); // Top, Right, Bottom, Left
+	    GridPane.setMargin(nameLabel, new Insets(10, 20, 10, 20)); // Add margins to prevent touching sides
+	    GridPane.setMargin(livesLabel, new Insets(10, 20, 10, 20));
+	    GridPane.setMargin(speedLabel, new Insets(10, 20, 10, 20));
+	    GridPane.setMargin(nameLabel2, new Insets(10, 20, 10, 20));
+	    GridPane.setMargin(livesLabel2, new Insets(10, 20, 10, 20));
+	    GridPane.setMargin(speedLabel2, new Insets(10, 20, 10, 20));
+	    GridPane.setMargin(confirmLabel, new Insets(20, 0, 20, 0));
+	    GridPane.setMargin(cancelLabel, new Insets(20, 0, 20, 0));
 
-		RowConstraints row1Constraints = new RowConstraints();
-		row1Constraints.setPercentHeight(50);
+	    // Define column constraints
+	    ColumnConstraints column1 = new ColumnConstraints();
+	    column1.setPercentWidth(50); // Adjust as needed
+	    ColumnConstraints column2 = new ColumnConstraints();
+	    column2.setPercentWidth(50); // Adjust as needed
+	    this.getColumnConstraints().addAll(column1, column2);
 
-		Image logo = new Image("file:images/logo.png", 450, 195, true, true);
-		ImageView logoImageView = new ImageView(logo);
+	    // Add components to grid
+	    this.add(promptLabel, 0, 0, 2, 1); // Spanning two columns
+	    this.add(nameLabel, 0, 1);
+	    this.add(livesLabel, 0, 2);
+	    this.add(speedLabel, 0, 3);
+	    this.add(nameLabel2, 1, 1);
+	    this.add(livesLabel2, 1, 2);
+	    this.add(speedLabel2, 1, 3);
+	    this.add(confirmLabel, 0, 4, 2, 1); // Spanning two columns
+	    this.add(cancelLabel, 0, 5, 2, 1); // Spanning two columns
 
-		GridPane.setHalignment(logoImageView, HPos.CENTER);
-
-		this.add(logoImageView, 0, 0);
-		this.add(promptLabel, 0, 1);
-		this.add(nameLabel, 0, 2);
-		this.add(livesLabel, 0, 3);
-		this.add(speedLabel, 0, 4);
-		this.add(nameLabel2, 0, 2);
-		this.add(livesLabel2, 0, 3);
-		this.add(speedLabel2, 0, 4);
-		this.add(confirmLabel, 0, 5);
-		this.add(cancelLabel, 0, 6);
-		this.setStyle("-fx-background-color: black;");
-		this.getColumnConstraints().addAll(col1Constraints);
-		this.getRowConstraints().addAll(row1Constraints);
+	    // Set grid pane style and padding
+	    this.setStyle("-fx-background-color: black;");
+	    this.setPadding(new Insets(20, 20, 20, 20)); // Padding around the entire grid
 	}
+
 	
 	public void setShipInfo(SpaceShip currShip)
 	{
