@@ -15,6 +15,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.HBox;
@@ -39,9 +41,9 @@ public class SpaceInvadersGUI extends Application {
 	private StackPane basePane = new StackPane();
 	private TutorialPane tutorialPane = new TutorialPane();
 	private UpgradeShipPane upgradeShipPane = new UpgradeShipPane();
-	private OptionsPane optionsPane = new OptionsPane();
 	private GameOverPane gameOverPane = new GameOverPane();
 	private PlayerSelectionPane playerSelectionPane = new PlayerSelectionPane();
+	private PauseMenuPane pauseMenuPane = new PauseMenuPane();
 	private SpaceShip spaceship1;
 	private SpaceShip spaceship2;
 	private boolean fireBullet1 = false;
@@ -134,6 +136,11 @@ public class SpaceInvadersGUI extends Application {
 
 		// Keyboard movement
 		scene.addEventFilter(KeyEvent.KEY_PRESSED, (KeyEvent event) -> {
+			if (event.getCode().equals(KeyCode.ESCAPE) && basePane.getChildren().contains(pane)) {
+				basePane.getChildren().remove(pane);
+				pauseGame(stage);
+				basePane.getChildren().add(pauseMenuPane);
+			}
 			if (!spaceship1.isDestroyed()) {
 				switch (event.getCode()) {
 				case A:
@@ -290,6 +297,7 @@ public class SpaceInvadersGUI extends Application {
 		};
 
 		stage.setFullScreen(true);
+		stage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
 		stage.setTitle("Space Invaders");
 		stage.setScene(scene);
 		stage.show();
@@ -309,6 +317,8 @@ public class SpaceInvadersGUI extends Application {
 		pane.getChildren().add(ufo); // Add UFO to the main pane
 		setupUFOMovement();
 
+		mainMenu = new MainMenuPane();
+		basePane.getChildren().add(mainMenu);
 		registerMenuHandlers(stage);
 		
 		// TODO: REMOVE BEFORE SUBMITTING
@@ -320,8 +330,7 @@ public class SpaceInvadersGUI extends Application {
 		devMenu.getChildren().add(nextLevelCheat);
 		nextLevelCheat.setOnMouseClicked(e -> {
 			alienGridPane.getChildren().clear();
-			increaseDifficulty(stage);
-			currTimeline.play();
+			upgradeShip(stage);
 		});
 		Button dieButton = new Button("Die");
 		devMenu.getChildren().add(dieButton);
@@ -336,11 +345,33 @@ public class SpaceInvadersGUI extends Application {
 				endGame(stage);
 			}
 		});
+		Button forceUFOButton = new Button ("Force UFO appearance");
+		devMenu.getChildren().add(forceUFOButton);
+		forceUFOButton.setOnMouseClicked(e -> {
+			if (!ufo.isVisible()) {
+	            System.out.println("UFO is about to appear."); // Debug statement
+
+	            ufo.setVisible(true);
+	            ufo.revive();
+	            ufo.setLayoutX(-ufo.getWidth()); // Starting position (left side, off-screen)
+	            ufo.setLayoutY(80); // Top of the screen
+
+	            System.out.println("UFO width: " + ufo.getWidth()); // Debug statement
+	            System.out.println("UFO initial X position: " + ufo.getLayoutX()); // Debug statement
+	            
+				KeyValue keyValue = new KeyValue(ufo.layoutXProperty(), pane.getWidth());
+	            KeyFrame keyFrame = new KeyFrame(Duration.seconds(7), keyValue); // Adjust duration as needed
+	            ufoMoveTimeline = new Timeline(keyFrame);
+	            ufoMoveTimeline.setOnFinished(ev -> {
+	                ufo.setVisible(false); // Hide UFO after finishing the move
+	                System.out.println("UFO animation finished."); // Debug statement
+	            });
+	            ufoMoveTimeline.play();
+			}
+		});
 	}
 
 	private void registerMenuHandlers(Stage stage) {
-		mainMenu = new MainMenuPane();
-		basePane.getChildren().add(mainMenu);		
 		mainMenu.getStartGameLabel().setOnMouseClicked(event -> {
 			basePane.getChildren().remove(mainMenu);
 			basePane.getChildren().add(playerSelectionPane);
@@ -348,10 +379,6 @@ public class SpaceInvadersGUI extends Application {
 		mainMenu.getTutorialLabel().setOnMouseClicked(event -> {
 			basePane.getChildren().remove(mainMenu);
 			basePane.getChildren().add(tutorialPane);
-		});
-		mainMenu.getOptionsLabel().setOnMouseClicked(event -> {
-			basePane.getChildren().remove(mainMenu);
-			basePane.getChildren().add(optionsPane);
 		});
 		mainMenu.getQuitLabel().setOnMouseClicked(event -> {
 			stage.close();
@@ -397,19 +424,11 @@ public class SpaceInvadersGUI extends Application {
 			basePane.getChildren().remove(tutorialPane);
 			basePane.getChildren().add(mainMenu);
 		});
-		optionsPane.getBackLabel().setOnMouseClicked(event -> {
-			basePane.getChildren().remove(optionsPane);
-			basePane.getChildren().add(mainMenu);
-		});
 		gameOverPane.getRestartLabel().setOnMouseClicked(event -> {
 			basePane.getChildren().remove(gameOverPane);
 			resetGame(stage);
 			basePane.getChildren().add(pane);
-			
-			// start the game
-			currTimeline.play();
-			timer.start();
-			ufoMovement.play();
+			resumeGame(stage);
 		});
 		gameOverPane.getMainMenuLabel().setOnMouseClicked(event -> {
 			basePane.getChildren().remove(gameOverPane);
@@ -418,6 +437,22 @@ public class SpaceInvadersGUI extends Application {
 		});
 		gameOverPane.getQuitLabel().setOnMouseClicked(event -> {
 			stage.close();
+		});
+		pauseMenuPane.getResumeLabel().setOnMouseClicked(event -> {
+			basePane.getChildren().remove(pauseMenuPane);
+			basePane.getChildren().add(pane);
+			resumeGame(stage);
+		});
+		pauseMenuPane.getRestartLabel().setOnMouseClicked(event -> {
+			basePane.getChildren().remove(pauseMenuPane);
+			resetGame(stage);
+			basePane.getChildren().add(pane);
+			resumeGame(stage);
+		});
+		pauseMenuPane.getMainMenuLabel().setOnMouseClicked(event -> {
+			basePane.getChildren().remove(pauseMenuPane);
+			resetGame(stage);
+			basePane.getChildren().add(mainMenu);
 		});
 	}
 
@@ -547,9 +582,13 @@ public class SpaceInvadersGUI extends Application {
 											aliens[finalI][finalJ] = null;
 											if (allAliensDestroyed()) {
 												System.out.println("Increasing difficulty");
+<<<<<<< HEAD
 												//increaseDifficulty(stage);
 												upgradeShip(stage, "Player 1", spaceship1);
 												currTimeline.play();
+=======
+												upgradeShip(stage);
+>>>>>>> 6375f1d947d877cf06f3efcc535ec18e10819736
 											}
 										}));
 								explosionTimeline.setCycleCount(1);
@@ -711,6 +750,22 @@ public class SpaceInvadersGUI extends Application {
 		moveAliensTimeline.setCycleCount(Timeline.INDEFINITE);
 		return moveAliensTimeline;
 	}
+	
+	private void resumeGame(Stage stage) {
+		currTimeline.play();
+		timer.start();
+		ufoMovement.play();
+		if (ufoMoveTimeline != null)
+			ufoMoveTimeline.play();
+	}
+	
+	private void pauseGame(Stage stage) {
+		currTimeline.stop();
+		timer.stop();
+		ufoMovement.stop();
+		if (ufoMoveTimeline != null)
+			ufoMoveTimeline.pause();
+	}
 
 	private void endGame(Stage stage) {
 		timer.stop();
@@ -724,8 +779,12 @@ public class SpaceInvadersGUI extends Application {
 	}
 	
 	private void resetGame(Stage stage) {
+		pauseGame(stage);
 		score = 0;
+		incrementScore(0);	// update score label
 		pauseDuration = 1;
+		increaseDifficulty(stage);
+		moveAlienGrid(stage);
 		
 		for (Shield shield : shields)
 			shield.resetHealth();
@@ -766,16 +825,15 @@ public class SpaceInvadersGUI extends Application {
 		ufo.setLayoutX(-ufo.getWidth());
 		gameOverPane = new GameOverPane();
 		registerMenuHandlers(stage);
+<<<<<<< HEAD
 		
+=======
+>>>>>>> 6375f1d947d877cf06f3efcc535ec18e10819736
 	}
 	
 	private void upgradeShip(Stage stage, String player, SpaceShip ship) {
 		SpaceShip currShip = new SpaceShip(spaceship1.getImage(), spaceship1.getName(), spaceship1.getSpeed(), spaceship1.getOriginalLives());
-		timer.stop();
-		currTimeline.stop();
-		ufoMovement.stop();
-		if (ufoMoveTimeline != null)
-			ufoMoveTimeline.stop();
+		pauseGame(stage);
 		basePane.getChildren().remove(pane);
 		basePane.getChildren().add(upgradeShipPane);
 		upgradeShipPane.setShipInfo(ship, player);
@@ -786,11 +844,12 @@ public class SpaceInvadersGUI extends Application {
 		    System.out.println("Modified ship lives: " + spaceship1.getLives());
 		    timer.start();
 		    currTimeline = moveAlienGrid(stage); // Reset currTimeline with the new timeline
-		    currTimeline.play(); // Start the new timeline for alien movement
 		    ufoMovement.play();
 		    if (ufoMoveTimeline != null)
 		    	ufoMoveTimeline.play();
+		    pauseDuration = pauseDuration * 0.7;
 		    increaseDifficulty(stage);
+		    currTimeline.play(); // Start the new timeline for alien movement
 		    setLives();
 		    if (player.equals("Player 1"))
 		    {
@@ -819,18 +878,18 @@ public class SpaceInvadersGUI extends Application {
 			
 			timer.start();
 		    currTimeline = moveAlienGrid(stage); // Reset currTimeline with the new timeline
-		    currTimeline.play(); // Start the new timeline for alien movement
 		    ufoMovement.play();
 		    if (ufoMoveTimeline != null)
 		    	ufoMoveTimeline.play();
+		    pauseDuration = pauseDuration * 0.7;
 		    increaseDifficulty(stage);
+		    currTimeline.play(); // Start the new timeline for alien movement
 			setLives();
 		});
 	}
 
 	private void increaseDifficulty(Stage stage) {
 		System.out.println("entering method");
-		pauseDuration = pauseDuration * 0.7;
 		System.out.println("New update duration: " + pauseDuration);
 		currTimeline.stop();
 		currTimeline.getKeyFrames().clear();
@@ -857,7 +916,7 @@ public class SpaceInvadersGUI extends Application {
 		});
 		currTimeline.getKeyFrames().add(newKeyFrame);
 
-		KeyFrame bulletKeyFrame = new KeyFrame(Duration.millis(500), e -> {
+		KeyFrame bulletKeyFrame = new KeyFrame(Duration.millis(Math.max(100, pauseDuration*1000)), e -> {
 			for (int i = 0; i < 4; i++) {
 				int num = randGen.nextInt(0, 200);
 				if (num < alienGridPane.getChildren().size()) {
