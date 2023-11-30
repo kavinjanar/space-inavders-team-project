@@ -4,6 +4,11 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 
+/**
+ * The {@code Alien} class represents an alien entity in the game.
+ * It extends {@code Pane} and manages images representing different states of the alien,
+ * such as its normal appearance and an explosion state when it is destroyed.
+ */
 public class Alien extends Pane {
     protected ImageView imageView;
     protected Image image1;
@@ -12,6 +17,14 @@ public class Alien extends Pane {
     protected Image explosionImage;
     private boolean isAlive = true;
 
+    /**
+     * Constructs an Alien object with specified images and size.
+     * 
+     * @param imageUrl1          The URL of the first image for the alien.
+     * @param imageUrl2          The URL of the second image for the alien.
+     * @param explosionImageUrl  The URL of the explosion image for the alien.
+     * @param width              The width to set for the alien images.
+     */
     public Alien(String imageUrl1, String imageUrl2, String explosionImageUrl, int width) {
         this.image1 = new Image(imageUrl1);
         this.image2 = new Image(imageUrl2);
@@ -27,7 +40,8 @@ public class Alien extends Pane {
     }
     
     /**
-     * switches between image1 and image2, and vice versa
+     * Switches between the first and second image of the alien.
+     * If the alien is not alive, this method does nothing.
      */
     public void switchImage() {
     	if (!isAlive) return;
@@ -41,13 +55,18 @@ public class Alien extends Pane {
     }
     
     /**
-     * switches alien image to explode
+     * Changes the alien's image to an explosion image and sets its state as not alive.
      */
     public void explode() {
         imageView.setImage(explosionImage);
         isAlive = false;
     }
     
+    /**
+     * Returns the alive status of the alien.
+     * 
+     * @return {@code true} if the alien is alive, {@code false} otherwise.
+     */
     public boolean isAlive() {
         return isAlive;
     }
