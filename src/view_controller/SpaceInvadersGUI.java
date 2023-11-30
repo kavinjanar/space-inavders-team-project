@@ -748,6 +748,7 @@ public class SpaceInvadersGUI extends Application {
 	
 	private void resetGame(Stage stage) {
 		score = 0;
+		incrementScore(0);	// update score label
 		pauseDuration = 1;
 		increaseDifficulty(stage);
 		
