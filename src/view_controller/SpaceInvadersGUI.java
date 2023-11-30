@@ -326,54 +326,8 @@ public class SpaceInvadersGUI extends Application {
 		basePane.getChildren().add(mainMenu);
 		registerMenuHandlers(stage);
 		
-		// TODO: REMOVE BEFORE SUBMITTING
-		HBox devMenu = new HBox();
-		devMenu.setLayoutX(0);
-		devMenu.setLayoutY(0);
-		pane.getChildren().add(devMenu);
-		Button nextLevelCheat = new Button("Next Level");
-		devMenu.getChildren().add(nextLevelCheat);
-		nextLevelCheat.setOnMouseClicked(e -> {
-			alienGridPane.getChildren().clear();
-			upgradeShip(stage, "Player 1", spaceship1);
-		});
-		Button dieButton = new Button("Die");
-		devMenu.getChildren().add(dieButton);
-		dieButton.setOnMouseClicked(e -> {
-			spaceship1.hitShip();
-			if (spaceship2 != null) spaceship2.hitShip();
-			setLives();
-			if (spaceship1.isDestroyed() && spaceship2 == null) {
-				endGame(stage);
-			}
-			else if (spaceship1.isDestroyed() && spaceship2 != null && spaceship2.isDestroyed()) {
-				endGame(stage);
-			}
-		});
-		Button forceUFOButton = new Button ("Force UFO appearance");
-		devMenu.getChildren().add(forceUFOButton);
-		forceUFOButton.setOnMouseClicked(e -> {
-			if (!ufo.isVisible()) {
-	            System.out.println("UFO is about to appear."); // Debug statement
-
-	            ufo.setVisible(true);
-	            ufo.revive();
-	            ufo.setLayoutX(-ufo.getWidth()); // Starting position (left side, off-screen)
-	            ufo.setLayoutY(80); // Top of the screen
-
-	            System.out.println("UFO width: " + ufo.getWidth()); // Debug statement
-	            System.out.println("UFO initial X position: " + ufo.getLayoutX()); // Debug statement
-	            
-				KeyValue keyValue = new KeyValue(ufo.layoutXProperty(), pane.getWidth());
-	            KeyFrame keyFrame = new KeyFrame(Duration.seconds(7), keyValue); // Adjust duration as needed
-	            ufoMoveTimeline = new Timeline(keyFrame);
-	            ufoMoveTimeline.setOnFinished(ev -> {
-	                ufo.setVisible(false); // Hide UFO after finishing the move
-	                System.out.println("UFO animation finished."); // Debug statement
-	            });
-	            ufoMoveTimeline.play();
-			}
-		});
+		
+		
 	}
 
 	/**
