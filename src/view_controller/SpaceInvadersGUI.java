@@ -36,6 +36,9 @@ import model.SoundPlayer;
 import model.SpaceShip;
 import model.UFO;
 
+/**
+ * Main GUI for the Space Invaders Game that contains all the different panes
+ */
 public class SpaceInvadersGUI extends Application {
 	private Pane pane = new Pane();
 	private StackPane basePane = new StackPane();
