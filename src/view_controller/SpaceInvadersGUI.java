@@ -323,7 +323,6 @@ public class SpaceInvadersGUI extends Application {
 		nextLevelCheat.setOnMouseClicked(e -> {
 			alienGridPane.getChildren().clear();
 			upgradeShip(stage);
-			currTimeline.play();
 		});
 		Button dieButton = new Button("Die");
 		devMenu.getChildren().add(dieButton);
@@ -747,10 +746,12 @@ public class SpaceInvadersGUI extends Application {
 	}
 	
 	private void resetGame(Stage stage) {
+		pauseGame(stage);
 		score = 0;
 		incrementScore(0);	// update score label
 		pauseDuration = 1;
 		increaseDifficulty(stage);
+		moveAlienGrid(stage);
 		
 		for (Shield shield : shields)
 			shield.resetHealth();
