@@ -586,7 +586,13 @@ public class SpaceInvadersGUI extends Application {
 											aliens[finalI][finalJ] = null;
 											if (allAliensDestroyed()) {
 												System.out.println("Increasing difficulty");
-												upgradeShip(stage, "Player 1", spaceship1);
+												//increaseDifficulty(stage);
+												if (!spaceship1.isDestroyed())
+												{
+													upgradeShip(stage, "Player 1", spaceship1);
+												}else {
+													upgradeShip(stage, "Player 2", spaceship2);
+												}
 											}
 										}));
 								explosionTimeline.setCycleCount(1);
@@ -847,7 +853,7 @@ public class SpaceInvadersGUI extends Application {
 		    setLives();
 		    if (player.equals("Player 1"))
 		    {
-		    	if (spaceship2 != null)
+		    	if (!spaceship2.isDestroyed())
 		    	{
 		    		upgradeShip(stage, "Player 2", spaceship2);
 		    	}
