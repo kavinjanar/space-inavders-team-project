@@ -834,6 +834,11 @@ public class SpaceInvadersGUI extends Application {
 	private void upgradeShip(Stage stage, String player, SpaceShip ship) {
 		SpaceShip currShip = new SpaceShip(spaceship1.getImage(), spaceship1.getName(), spaceship1.getSpeed(), spaceship1.getOriginalLives());
 		pauseGame(stage);
+		ufo.explode();
+		ufo.setVisible(false);
+		ufo.setLayoutX(-ufo.getWidth());
+		if (ufoMoveTimeline != null)
+			ufoMoveTimeline.pause();
 		basePane.getChildren().remove(pane);
 		basePane.getChildren().add(upgradeShipPane);
 		upgradeShipPane.setShipInfo(ship, player);
