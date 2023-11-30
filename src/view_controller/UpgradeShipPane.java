@@ -77,6 +77,7 @@ public final class UpgradeShipPane extends GridPane {
 
 		// Set alignments for labels
 		GridPane.setHalignment(promptLabel, HPos.CENTER);
+		promptLabel.setWrapText(true);
 		GridPane.setHalignment(shipImage1, HPos.CENTER);
 		GridPane.setHalignment(shipImage2, HPos.CENTER);
 		GridPane.setHalignment(nameLabel, HPos.CENTER);
